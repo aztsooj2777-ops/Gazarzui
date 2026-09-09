@@ -202,3 +202,21 @@
   font-size: .74rem; padding: 3px 9px; border-radius: var(--r-full);
   background: var(--surface-3); color: var(--ink-3); font-weight: 600;
 }
+
+/* ===================== Гар утсан дээрх уншигдац ===================== */
+/* SVG-ийн үсгийн хэмжээ viewBox нэгжээр өгөгддөг тул диаграм жижгэрэхэд
+   бичиг уншигдахгүй болдог. Нарийн дэлгэцэд харьцангуй томсгоно. */
+@media (max-width: 760px) {
+  .chart .tick { font-size: 15px; }
+  .chart .tick-b { font-size: 16px; }
+  .chart .lbl { font-size: 15px; }
+  .pyramid .agelbl { font-size: 13px; }
+  .choro text { font-size: 17px; }
+  .contour-map .clbl { font-size: 14px; }
+  .compass .card { font-size: 15px; }
+  .il-stage { padding: 16px 14px; }
+  .lab { padding: 14px 12px; }
+  .readout { grid-template-columns: repeat(auto-fit, minmax(108px, 1fr)); gap: 8px; }
+  .readout .cell { padding: 9px 8px; }
+  .readout .cell .v { font-size: 1.05rem; }
+}
