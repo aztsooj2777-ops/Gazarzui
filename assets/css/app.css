@@ -390,3 +390,113 @@
   .mn-map .cap { font-size: 14px; }
   .map-hint { display: block; }
 }
+
+/* ==========================================================================
+   БАГШИЙН ХИЧЭЭЛ — бусад хичээлээс онцгойлон ялгагдах карт
+   ========================================================================== */
+.tl-band {
+  position: relative; overflow: hidden;
+  border-radius: var(--r-xl);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--gold) 14%, var(--surface)) 0%,
+                             color-mix(in srgb, var(--terra) 9%, var(--surface)) 100%);
+  border: 1px solid color-mix(in srgb, var(--gold) 38%, transparent);
+  padding: clamp(20px, 3vw, 34px);
+}
+.tl-band > * { position: relative; z-index: 1; }
+.tl-band .topo { opacity: .13; }
+
+.tl-head { display: flex; align-items: flex-start; gap: 14px; flex-wrap: wrap; margin-bottom: 22px; }
+.tl-head .mark {
+  width: 46px; height: 46px; border-radius: var(--r-md); flex-shrink: 0;
+  display: grid; place-items: center; font-size: 1.3rem;
+  background: linear-gradient(135deg, var(--gold), var(--terra)); color: #fff;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 45%, transparent);
+}
+.tl-head h2 { margin: 0 0 4px; }
+.tl-head p { margin: 0; color: var(--ink-3); font-size: .96rem; }
+
+.tl-card {
+  position: relative; display: flex; flex-direction: column; height: 100%;
+  padding: 0; overflow: hidden;
+  background: var(--surface);
+  border: 2px solid color-mix(in srgb, var(--gold) 45%, transparent);
+  border-radius: var(--r-lg);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--gold) 16%, transparent);
+  transition: transform .22s cubic-bezier(.22,.9,.3,1), box-shadow .22s, border-color .22s;
+  text-decoration: none; color: inherit;
+}
+.tl-card:hover {
+  transform: translateY(-4px); text-decoration: none;
+  border-color: var(--gold);
+  box-shadow: 0 14px 36px color-mix(in srgb, var(--gold) 28%, transparent);
+}
+
+/* Өнцгийн тууз */
+.tl-ribbon {
+  position: absolute; top: 12px; left: 12px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 11px; border-radius: var(--r-full);
+  background: linear-gradient(135deg, var(--gold), var(--terra)); color: #fff;
+  font-size: .68rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+  box-shadow: 0 3px 10px rgba(0,0,0,.22);
+}
+
+/* Медиа хэсэг */
+.tl-media {
+  position: relative; aspect-ratio: 16 / 9; overflow: hidden;
+  background: var(--grad-hero); display: grid; place-items: center;
+}
+.tl-media img { width: 100%; height: 100%; object-fit: cover; }
+.tl-media .play {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  background: linear-gradient(to top, rgba(4,16,22,.62), rgba(4,16,22,.12));
+  transition: background .2s;
+}
+.tl-card:hover .tl-media .play { background: linear-gradient(to top, rgba(4,16,22,.5), rgba(4,16,22,.06)); }
+.tl-media .play i {
+  width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(255,255,255,.94); box-shadow: 0 6px 22px rgba(0,0,0,.32);
+  transition: transform .22s;
+}
+.tl-card:hover .tl-media .play i { transform: scale(1.09); }
+.tl-media .play i::before {
+  content: ""; width: 0; height: 0; margin-left: 5px;
+  border-left: 19px solid var(--terra);
+  border-top: 12px solid transparent; border-bottom: 12px solid transparent;
+}
+.tl-media .ext { position: relative; z-index: 1; text-align: center; color: #fff; padding: 18px; }
+.tl-media .ext .e { font-size: 2.6rem; filter: drop-shadow(0 3px 8px rgba(0,0,0,.3)); }
+.tl-media .ext .p { font-size: .82rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #ffd88a; margin-top: 8px; }
+.tl-media .dur {
+  position: absolute; right: 10px; bottom: 10px; z-index: 2;
+  background: rgba(0,0,0,.78); color: #fff; font-size: .74rem; font-weight: 700;
+  padding: 3px 8px; border-radius: 5px; font-family: var(--f-mono);
+}
+
+.tl-body { padding: 20px; display: flex; flex-direction: column; gap: 11px; flex: 1; }
+.tl-body h3 { margin: 0; font-size: 1.12rem; }
+.tl-body p.sum { margin: 0; font-size: .91rem; color: var(--ink-3); flex: 1; }
+.tl-author {
+  display: flex; align-items: center; gap: 10px;
+  padding-top: 12px; border-top: 1px solid var(--line);
+}
+.tl-author .av {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  display: grid; place-items: center; font-size: .8rem; font-weight: 800; color: #fff;
+  background: linear-gradient(135deg, var(--gold), var(--terra));
+}
+.tl-author .who { line-height: 1.3; min-width: 0; }
+.tl-author .who b { display: block; font-size: .88rem; }
+.tl-author .who small { color: var(--ink-4); font-size: .78rem; }
+
+/* Видео тоглуулагчийн цонх */
+.vid-frame {
+  position: relative; aspect-ratio: 16 / 9; width: 100%;
+  border-radius: var(--r-md); overflow: hidden; background: #000;
+}
+.vid-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+@media (max-width: 520px) {
+  .tl-head .mark { width: 40px; height: 40px; font-size: 1.1rem; }
+}

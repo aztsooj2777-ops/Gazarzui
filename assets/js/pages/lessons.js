@@ -1,18 +1,23 @@
 /* ==========================================================================
    Хичээлийн жагсаалт — шүүлтүүр, хайлт, ахиц
+   Багшийн өөрийн бэлтгэсэн хичээлүүд тусдаа онцгой хэсэгт харагдана.
    ========================================================================== */
 (function () {
   "use strict";
   const GZ = window.GZ, $ = GZ.$;
 
-  const TRACKS = ["Бүгд", "7-р анги", "8-р анги", "9-р анги", "Геологийн түүх"];
+  const TRACKS = ["Бүгд", "7-р анги", "8-р анги", "9-р анги", "11-р анги", "Геологийн түүх"];
   let track = "Бүгд", query = "";
 
   function boot() {
     $("#searchIcon").innerHTML = GZ.icon("search", 17);
 
     const chips = $("#trackChips");
-    chips.innerHTML = TRACKS.map((t) => `<button class="chip${t === track ? " active" : ""}" data-t="${GZ.esc(t)}">${GZ.esc(t)}</button>`).join("");
+    chips.innerHTML = TRACKS.map((t) => {
+      const isTL = t === "11-р анги";
+      return `<button class="chip${t === track ? " active" : ""}" data-t="${GZ.esc(t)}"${
+        isTL ? ' title="Багшийн бэлтгэсэн хичээл"' : ""}>${isTL ? "★ " : ""}${GZ.esc(t)}</button>`;
+    }).join("");
     chips.addEventListener("click", (e) => {
       const b = e.target.closest(".chip");
       if (!b) return;
@@ -40,7 +45,8 @@
     render();
   }
 
-  function match(L) {
+  /* ---------------- Шүүлт ---------------- */
+  function matchLesson(L) {
     if (track !== "Бүгд" && L.track !== track) return false;
     if (!query) return true;
     const hay = GZ.norm([
@@ -51,12 +57,43 @@
     return query.split(" ").every((w) => hay.includes(w));
   }
 
+  function matchTeacher(t) {
+    if (track !== "Бүгд" && t.track !== track) return false;
+    if (!query) return true;
+    const hay = GZ.norm([t.title, t.summary, t.source, t.author, (t.tags || []).join(" ")].join(" "));
+    return query.split(" ").every((w) => hay.includes(w));
+  }
+
+  /* ---------------- Дүрслэх ---------------- */
   function render() {
-    const list = (GZ.LESSONS || []).filter(match);
+    renderTeacher();
+    renderLessons();
+  }
+
+  function renderTeacher() {
+    const list = (GZ.TEACHER_LESSONS || []).filter(matchTeacher);
+    const wrap = $("#teacherBandWrap");
+    if (!wrap) return;
+
+    if (!list.length) {
+      wrap.classList.add("hidden");
+      $("#teacherGrid").innerHTML = "";
+      return;
+    }
+    wrap.classList.remove("hidden");
+    $("#tlCount").textContent = list.length + " хичээл";
+    $("#teacherGrid").innerHTML = list.map((t) => GZ.teacherCard(t)).join("");
+    GZ.bindTeacherCards($("#teacherGrid"));
+  }
+
+  function renderLessons() {
+    const list = (GZ.LESSONS || []).filter(matchLesson);
     const grid = $("#lessonGrid"), empty = $("#emptyState");
+    const tlShown = (GZ.TEACHER_LESSONS || []).filter(matchTeacher).length;
 
     grid.innerHTML = list.map((L) => GZ.lessonCard(L)).join("");
-    empty.innerHTML = list.length ? "" : `
+
+    empty.innerHTML = (list.length || tlShown) ? "" : `
       <div class="empty">
         <div class="big">🔍</div>
         <h3>Хичээл олдсонгүй</h3>
@@ -65,7 +102,9 @@
 
     const done = Object.keys(GZ.store.progress()).length;
     const total = (GZ.LESSONS || []).length;
-    $("#lessonCount").textContent = `${list.length} хичээл харагдаж байна`;
+    $("#lessonCount").textContent = list.length
+      ? `${list.length} бичмэл хичээл харагдаж байна`
+      : (tlShown ? "Энэ ангилалд зөвхөн багшийн хичээл байна" : "");
     $("#progressNote").innerHTML = done
       ? `Таны ахиц: <b>${done}/${total}</b> хичээл үзсэн`
       : `Хичээл нээхэд ахиц тань бүртгэгдэнэ`;

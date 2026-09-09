@@ -178,6 +178,14 @@
     reveal(host);
   }
 
+  /* ---------------- 4c. Багшийн өөрийн бэлтгэсэн хичээл ---------------- */
+  function initTeacher() {
+    const host = $("#teacherHome");
+    if (!host || !GZ.TEACHER_LESSONS) return;
+    host.innerHTML = GZ.TEACHER_LESSONS.map((t) => GZ.teacherCard(t)).join("");
+    GZ.bindTeacherCards(host);
+  }
+
   function reveal(host) {
     if (!("IntersectionObserver" in window)) { GZ.$$(".reveal", host).forEach((e) => e.classList.add("in")); return; }
     const io = new IntersectionObserver((en) => {
@@ -191,7 +199,7 @@
     GZ.$$(".reveal", host).forEach((e) => io.observe(e));
   }
 
-  function boot() { initFacts(); initDaily(); initInteractive(); initLessons(); initGames(); }
+  function boot() { initFacts(); initDaily(); initInteractive(); initTeacher(); initLessons(); initGames(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();
