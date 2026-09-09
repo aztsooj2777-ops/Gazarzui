@@ -217,6 +217,29 @@
       return ramp[GZ.clamp(Math.floor(t * ramp.length), 0, ramp.length - 1)];
     };
 
+    const sw = ramp.map((c) => `<i style="background:${c}"></i>`).join("");
+    const legend = `<div class="scale-bar"><span>${o.fmt ? o.fmt(min) : fmt(min, 1)}</span>
+      <span class="sw">${sw}</span><span>${o.fmt ? o.fmt(max) : fmt(max, 1)}</span></div>`;
+
+    /* Бодит аймгийн хил байвал полигоноор будна (илүү үнэн зөв картограм) */
+    if (GZ.MN_SHAPES && GZ.MN_SHAPES.length) {
+      const V = GZ.MN_VIEW || { w: MW, h: MH };
+      const provs = GZ.MN_SHAPES.map((s) => {
+        const v = vals[s.n];
+        return `<path class="a" data-a="${esc2(s.n)}" d="${s.d}" fill="${col(v)}"
+          ><title>${esc2(s.n)}: ${o.fmt ? o.fmt(v) : fmt(v, 1)}</title></path>`;
+      }).join("");
+      const names = GZ.AIMAGS.filter((a) => o.showNames).map((a) => {
+        const p = IL.xy(a.lon, a.lat);
+        return `<text x="${(p[0] + (a.dx || 0)).toFixed(1)}" y="${(p[1] + (a.dy || 0)).toFixed(1)}"
+          text-anchor="middle">${esc2(a.n)}</text>`;
+      }).join("");
+      return `<svg class="choro" viewBox="0 0 ${V.w} ${V.h}" role="img" aria-label="${esc2(o.alt || "Монголын картограм")}">
+          ${provs}${names}
+        </svg>${legend}`;
+    }
+
+    /* Нөөц: схем зураг дээр хэмжээгээр нь ялгасан цэг */
     const border = GZ.MN_BORDER.map(([lo, la], i) => {
       const [x, y] = IL.xy(lo, la);
       return (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
@@ -233,12 +256,10 @@
         r="${r.toFixed(1)}" fill="${col(v)}"><title>${esc2(a.n)}: ${o.fmt ? o.fmt(v) : fmt(v, 1)}</title></circle>`;
     }).join("");
 
-    const sw = ramp.map((c) => `<i style="background:${c}"></i>`).join("");
     return `<svg class="choro" viewBox="0 0 ${MW} ${MH}" role="img" aria-label="${esc2(o.alt || "Монголын картограм")}">
         <path d="${border}" fill="var(--surface-2)" stroke="var(--ink-4)" stroke-width="1.6" stroke-linejoin="round"/>
         ${dots}
-      </svg>
-      <div class="scale-bar"><span>${o.fmt ? o.fmt(min) : fmt(min, 1)}</span><span class="sw">${sw}</span><span>${o.fmt ? o.fmt(max) : fmt(max, 1)}</span></div>`;
+      </svg>${legend}`;
   };
 
   /* ---- Гулсуур ---- */

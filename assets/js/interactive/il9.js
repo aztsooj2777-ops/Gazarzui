@@ -79,8 +79,8 @@
       /* ---------------- 2 ---------------- */
       {
         t: "Нягтшлын картограм", min: 8, kind: "lab",
-        html: `<p>Нягтшил = <b>хүн ам ÷ талбай</b>. Доорх зурган дээр цэгийн <b>хэмжээ ба өнгө</b> нь
-          тухайн аймгийн нягтшлыг илэрхийлнэ. Цэг дээр дарж дэлгэрэнгүйг үз.</p>`,
+        html: `<p>Нягтшил = <b>хүн ам ÷ талбай</b>. Доорх газрын зураг дээр аймаг бүрийн <b>өнгө</b> нь
+          нягтшлыг илэрхийлнэ — тод байх тусам нягт. Аймаг дээр дарж дэлгэрэнгүйг үз.</p>`,
         mount(host) {
           const box = GZ.el("div", { class: "lab" });
           const vals = {};
@@ -107,13 +107,13 @@
               v[a.n] = mode === "dens" ? dens(a) : mode === "pop" ? POP[a.n] : a.area / 1000;
             });
             $("#s9map", box).innerHTML = D.choropleth({
-              values: v, sizeBy: true, log: mode !== "area",
+              values: v, sizeBy: true, log: mode !== "area", showNames: false,
               fmt: (x) => mode === "dens" ? x.toFixed(1) + " хүн/км²"
                 : mode === "pop" ? GZ.fmtNum(x) + " мянга"
                 : GZ.fmtNum(Math.round(x)) + " мянган км²",
               alt: "Монголын аймгуудын картограм",
             });
-            GZ.$$("#s9map .cdot", box).forEach((c) =>
+            GZ.$$("#s9map .cdot, #s9map path.a", box).forEach((c) =>
               c.addEventListener("click", () => info(c.dataset.a)));
           }
 

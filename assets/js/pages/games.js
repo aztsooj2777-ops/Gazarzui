@@ -58,7 +58,43 @@
     function MAPXY(lo, la) { return [((lo - LON0) * K * S), ((LAT1 - la) * S)]; }
   })();
 
-  function mapSvg(extra) {
+  /* Бодит хилтэй газрын зураг (geoBoundaries өгөгдөл дээр суурилсан).
+     Өгөгдөл ачаалагдаагүй тохиолдолд хуучин схем зураг руу шилжинэ. */
+  function mapSvg(extra, opts) {
+    const o = opts || {};
+    const V = GZ.MN_VIEW || { w: MAP.W, h: MAP.H };
+
+    if (!GZ.MN_SHAPES || !GZ.MN_SHAPES.length) return legacyMapSvg(extra);
+
+    const provs = GZ.MN_SHAPES.map((s) => {
+      const st = o.state ? o.state[s.n] : null;
+      return `<path class="prov${st ? " " + st : ""}${o.locked ? " locked" : ""}"
+        data-n="${esc(s.n)}" d="${s.d}"><title>${o.reveal || st ? esc(s.n) : ""}</title></path>`;
+    }).join("");
+
+    // Улсын хүрээ — аймгийн хилийн дээгүүр нимгэн тойм
+    const labels = (o.labels || []).map((n) => {
+      const a = GZ.AIMAGS.find((x) => x.n === n);
+      if (!a) return "";
+      const p = MAP.xy(a.lon, a.lat);
+      return `<text class="plbl" x="${(p[0] + (a.dx || 0)).toFixed(1)}"
+        y="${(p[1] + (a.dy || 0) - 9).toFixed(1)}" text-anchor="middle">${esc(a.n)}</text>`;
+    }).join("");
+
+    const ub = GZ.AIMAGS.find((x) => x.capital);
+    const cap = ub ? (() => { const p = MAP.xy(ub.lon, ub.lat);
+      return `<circle class="capdot" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4"/>`; })() : "";
+
+    return `<div class="map-wrap">
+      <svg class="mn-map" viewBox="0 0 ${V.w} ${V.h}" role="img" aria-label="Монгол улсын аймгуудын газрын зураг">
+        <g id="provLayer">${provs}</g>${cap}${labels}${extra || ""}
+      </svg>
+    </div>
+    <p class="map-hint muted tc">Зургийг хажуу тийш гүйлгэж болно</p>`;
+  }
+
+  /* Нөөц хувилбар — хилийн өгөгдөл ачаалагдаагүй үед */
+  function legacyMapSvg(extra) {
     const border = GZ.MN_BORDER.map(([lo, la], i) => {
       const [x, y] = MAP.xy(lo, la);
       return (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
@@ -87,20 +123,6 @@
       if (i >= rounds.length || lives <= 0) return done();
       const target = rounds[i];
 
-      const dots = GZ.AIMAGS.map((a) => {
-        const p = MAP.xy(a.lon, a.lat);
-        const x = p[0] + (a.dx || 0), y = p[1] + (a.dy || 0);
-        const st = solved[a.n];
-        // Нийслэлийг холбох туслах шугам (байрлалыг шилжүүлсэн тул)
-        const lead = a.dx || a.dy
-          ? `<line x1="${p[0].toFixed(1)}" y1="${p[1].toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--ink-4)" stroke-width="1" stroke-dasharray="2 2"/>`
-          : "";
-        return lead +
-          `<circle class="dot${st ? " " + st : ""}" data-n="${esc(a.n)}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${a.capital ? 9 : 7.5}"/>` +
-          (a.capital ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="var(--terra)" pointer-events="none"/>` : "") +
-          (st ? `<text x="${x.toFixed(1)}" y="${(y - 12).toFixed(1)}" text-anchor="middle" class="${a.capital ? "cap" : ""}">${esc(a.n)}</text>` : "");
-      }).join("");
-
       root().innerHTML = `
         ${hud([
           { label: "Оноо", value: score },
@@ -112,40 +134,48 @@
           <div class="tc mb24">
             <span class="badge terra">${esc(target.zone)} бүс</span>
             <h2 style="margin:10px 0 2px">«${esc(target.n)}» аймгийг ол</h2>
-            <p class="muted" style="margin:0">Зураг дээрх зөв цэг дээр дарна уу</p>
+            <p class="muted" style="margin:0">Газрын зураг дээрх зөв аймаг дээр дарна уу</p>
           </div>
-          ${mapSvg(dots)}
+          ${mapSvg("", { state: solved, labels: Object.keys(solved) })}
           <div id="mapMsg" class="tc mt16" style="min-height:64px"></div>
         </div>`;
       bindBack();
 
-      GZ.$$(".mn-map .dot").forEach((d) => {
-        if (solved[d.dataset.n]) return;
-        d.addEventListener("click", () => pick(d, target));
+      GZ.$$(".mn-map .prov").forEach((p) => {
+        if (solved[p.dataset.n]) return;
+        p.addEventListener("click", () => pick(p.dataset.n, target));
       });
     }
 
-    function pick(dot, target) {
-      const name = dot.dataset.n;
+    function pick(name, target) {
       const ok = name === target.n;
-      GZ.$$(".mn-map .dot").forEach((d) => d.replaceWith(d.cloneNode(true)));
+      // Дахин дарахаас сэргийлж бүх сонголтыг түгжих
+      GZ.$$(".mn-map .prov").forEach((p) => {
+        p.classList.add("locked");
+        p.replaceWith(p.cloneNode(true));
+      });
+
+      const mark = (n, cls) => {
+        const el = GZ.$$(".mn-map .prov").find((p) => p.dataset.n === n);
+        if (el) el.classList.add(cls);
+      };
 
       if (ok) {
         streak++; best = Math.max(best, streak);
         const pts = 10 + Math.min(streak - 1, 5) * 2;
         score += pts;
         solved[name] = "correct";
+        mark(name, "correct");
         $("#mapMsg").innerHTML = `<div class="alert ok" style="justify-content:center"><span class="ic">✅</span>
           <div><b>Зөв! +${pts} оноо</b><p style="margin:4px 0 0;font-size:.88rem">${esc(target.fact)}</p></div></div>`;
       } else {
         streak = 0; lives--;
         solved[target.n] = "solved";
+        mark(name, "wrong");
+        mark(target.n, "target");
         $("#mapMsg").innerHTML = `<div class="alert warn" style="justify-content:center"><span class="ic">📍</span>
-          <div><b>Тэр бол ${esc(name)}.</b> ${esc(target.n)} аймаг өөр байрлалд байна — тэмдэглэсэн.
+          <div><b>Тэр бол ${esc(name)}.</b> ${esc(target.n)} аймаг шараар тэмдэглэгдлээ.
           <p style="margin:4px 0 0;font-size:.88rem">${esc(target.fact)}</p></div></div>`;
-        // Зөв байрлалыг тодруулах
-        const t = GZ.$$(".mn-map .dot").find((d) => d.dataset.n === target.n);
-        if (t) t.classList.add("target");
       }
 
       const btn = GZ.el("button", { class: "btn btn-primary mt16", text: i + 1 >= rounds.length || lives <= 0 ? "Дүн харах →" : "Дараагийнх →" });
@@ -167,6 +197,21 @@
     draw();
   }
 
+  /* Далбааны зураг. Windows дээр emoji далбаа огт харагддаггүй тул
+     (мөн улсын кодыг үсгээр харуулж хариултыг задалдаг) жинхэнэ SVG ашиглана. */
+  function flag(cc, cls) {
+    return `<img class="flag-img${cls ? " " + cls : ""}" src="assets/img/flags/${esc(cc)}.svg"
+      alt="" loading="lazy" draggable="false">`;
+  }
+
+  /* Харьцуулах тоглоомын дүрс: улс бол далбаа, бусад тохиолдолд emoji */
+  function itemVisual(it) {
+    return it.cc
+      ? `<img class="flag-img" src="assets/img/flags/${esc(it.cc)}.svg" alt="" loading="lazy"
+           style="width:74px;border-radius:6px;box-shadow:0 3px 10px rgba(0,0,0,.3);margin:0 auto 2px">`
+      : (it.e || "📍");
+  }
+
   /* ================= 2. ДАЛБАА ТАНИХ ================= */
   function gameFlags() {
     quizStyle({
@@ -176,11 +221,11 @@
         const wrong = GZ.shuffle(GZ.COUNTRIES.filter((x) => x.n !== c.n)).slice(0, 3);
         const opts = GZ.shuffle([c, ...wrong]);
         return {
-          visual: `<div class="flag-big">${c.f}</div>`,
+          visual: `<div class="flag-big">${flag(c.cc)}</div>`,
           prompt: "Энэ бол аль улсын далбаа вэ?",
           options: opts.map((o) => o.n),
           answer: opts.indexOf(c),
-          after: `<b>${esc(c.n)}</b> — нийслэл нь ${esc(c.cap)}, ${esc(c.cont)} тивд.`,
+          after: `${flag(c.cc, "sm")}<b>${esc(c.n)}</b> — нийслэл нь ${esc(c.cap)}, ${esc(c.cont)} тивд.`,
         };
       },
       again: gameFlags,
@@ -201,13 +246,13 @@
           prompt: `«${c.cap}» аль улсын нийслэл вэ?`,
           options: opts.map((o) => o.n),
           answer: opts.indexOf(c),
-          after: `<b>${esc(c.cap)}</b> — ${esc(c.n)} ${c.f} улсын нийслэл.`,
+          after: `${flag(c.cc, "sm")}<b>${esc(c.cap)}</b> — ${esc(c.n)} улсын нийслэл.`,
         } : {
-          visual: `<div class="flag-big" style="font-size:clamp(3rem,10vw,5rem)">${c.f}</div>`,
+          visual: `<div class="flag-big">${flag(c.cc)}</div>`,
           prompt: `${c.n} улсын нийслэл аль нь вэ?`,
           options: opts.map((o) => o.cap),
           answer: opts.indexOf(c),
-          after: `<b>${esc(c.n)}</b> ${c.f} улсын нийслэл нь <b>${esc(c.cap)}</b>.`,
+          after: `${flag(c.cc, "sm")}<b>${esc(c.n)}</b> улсын нийслэл нь <b>${esc(c.cap)}</b>.`,
         };
       },
       again: gameCapital,
@@ -538,12 +583,12 @@
           </div>
           <div class="hl-pair">
             <div class="hl-side"><div class="topo"></div>
-              <div class="e">${a.e}</div><div class="n">${esc(a.n)}</div>
+              <div class="e">${itemVisual(a)}</div><div class="n">${esc(a.n)}</div>
               <div class="v">${GZ.fmtNum(a.v)} <span style="font-size:.7rem;opacity:.7">${esc(cat.unit)}</span></div>
             </div>
             <div class="hl-vs">VS</div>
             <div class="hl-side"><div class="topo"></div>
-              <div class="e">${b.e}</div><div class="n">${esc(b.n)}</div>
+              <div class="e">${itemVisual(b)}</div><div class="n">${esc(b.n)}</div>
               <div class="v" id="bVal">${revealed ? GZ.fmtNum(b.v) + ` <span style="font-size:.7rem;opacity:.7">${esc(cat.unit)}</span>` : "???"}</div>
             </div>
           </div>

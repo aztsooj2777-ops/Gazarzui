@@ -233,7 +233,16 @@
 .hl-btns { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
 
 /* Flags */
-.flag-big { font-size: clamp(4.5rem, 16vw, 8rem); line-height: 1; text-align: center; margin: 6px 0 18px; filter: drop-shadow(0 8px 18px rgba(0,0,0,.18)); }
+/* Далбаа — жинхэнэ SVG зураг (Windows дээр emoji далбаа харагддаггүй) */
+.flag-big { text-align: center; margin: 6px 0 20px; }
+.flag-img {
+  display: block; margin: 0 auto;
+  width: min(320px, 78%); aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: 10px; border: 1px solid var(--line-2);
+  box-shadow: 0 10px 26px rgba(11,31,42,.18);
+  background: var(--surface-3);
+}
+.flag-img.sm { width: 46px; aspect-ratio: 4 / 3; border-radius: 4px; box-shadow: var(--sh-1); display: inline-block; vertical-align: -3px; margin-right: 6px; }
 
 /* ===================== AI Чат ===================== */
 .chat-layout { display: grid; grid-template-columns: 268px 1fr; gap: 24px; align-items: start; }
@@ -499,4 +508,37 @@
 
 @media (max-width: 520px) {
   .tl-head .mark { width: 40px; height: 40px; font-size: 1.1rem; }
+}
+
+/* ==========================================================================
+   БОДИТ ХИЛТЭЙ ГАЗРЫН ЗУРАГ — аймгийн полигон
+   ========================================================================== */
+.mn-map .prov {
+  fill: color-mix(in srgb, var(--teal) 9%, var(--surface-2));
+  stroke: var(--surface); stroke-width: 1.1; stroke-linejoin: round;
+  cursor: pointer; transition: fill .16s;
+}
+.mn-map .prov:hover { fill: color-mix(in srgb, var(--teal) 34%, var(--surface)); }
+.mn-map .prov.locked { cursor: default; }
+.mn-map .prov.locked:hover { fill: inherit; }
+.mn-map .prov.correct { fill: var(--ok); }
+.mn-map .prov.wrong   { fill: var(--danger); }
+.mn-map .prov.solved  { fill: color-mix(in srgb, var(--teal) 55%, var(--surface)); }
+.mn-map .prov.target  { fill: var(--gold); animation: prov-pulse 1.3s ease-in-out infinite; }
+@keyframes prov-pulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
+
+.mn-map .outline {
+  fill: none; stroke: var(--ink-3); stroke-width: 1.8;
+  stroke-linejoin: round; pointer-events: none;
+}
+.mn-map .plbl {
+  font-size: 11px; font-weight: 700; fill: var(--ink);
+  paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round;
+  pointer-events: none; font-family: var(--f-sans);
+}
+.mn-map .capdot { fill: var(--terra); stroke: #fff; stroke-width: 1.4; pointer-events: none; }
+
+@media (max-width: 760px) {
+  .mn-map .plbl { font-size: 17px; stroke-width: 4px; }
+  .mn-map .prov { stroke-width: 1.6; }
 }
