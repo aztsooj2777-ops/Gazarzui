@@ -1,0 +1,204 @@
+/* ==========================================================================
+   Интерактив хичээл — тоглуулагч, лаборатори, диаграм
+   ========================================================================== */
+
+/* ===================== Тоглуулагчийн бүтэц ===================== */
+.il-layout { display: grid; grid-template-columns: 268px 1fr; gap: 28px; align-items: start; }
+@media (max-width: 980px) { .il-layout { grid-template-columns: 1fr; gap: 18px; } }
+
+.il-rail { position: sticky; top: calc(var(--nav-h) + 16px); }
+@media (max-width: 980px) { .il-rail { position: static; } }
+.il-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+@media (max-width: 980px) {
+  .il-steps { flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 6px; }
+  .il-steps li { flex: 0 0 auto; }
+}
+.il-step-btn {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 9px 11px; border: 0; border-radius: var(--r-sm);
+  background: transparent; color: var(--ink-2); text-align: left;
+  font-size: .88rem; font-weight: 550; transition: background .16s, color .16s;
+}
+.il-step-btn:hover { background: var(--surface-3); }
+.il-step-btn.active { background: var(--teal-soft); color: var(--teal); font-weight: 700; }
+.il-step-btn .n {
+  width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%;
+  display: grid; place-items: center; font-size: .74rem; font-weight: 800;
+  background: var(--surface-3); color: var(--ink-4); font-family: var(--f-mono);
+}
+.il-step-btn.active .n { background: var(--teal); color: #fff; }
+.il-step-btn.done .n { background: var(--ok); color: #fff; }
+.il-step-btn .mins { margin-left: auto; font-size: .72rem; color: var(--ink-4); font-family: var(--f-mono); }
+
+.il-stage {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg);
+  padding: clamp(20px, 3vw, 34px); box-shadow: var(--sh-2); min-height: 420px;
+}
+.il-topbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.il-topbar .progress { flex: 1; min-width: 130px; }
+.il-clock {
+  font-family: var(--f-mono); font-size: .85rem; font-weight: 700;
+  padding: 5px 12px; border-radius: var(--r-full); background: var(--surface-3); color: var(--ink-2);
+}
+.il-kicker { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); font-weight: 700; }
+.il-stage h2 { margin: 6px 0 16px; }
+.il-nav { display: flex; gap: 10px; justify-content: space-between; margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+/* ===================== Лабораторийн хайрцаг ===================== */
+.lab {
+  border: 1px solid color-mix(in srgb, var(--teal) 28%, var(--line));
+  border-radius: var(--r-md); background: var(--surface-2);
+  padding: clamp(14px, 2vw, 22px); margin: 20px 0;
+}
+.lab-head { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+.lab-head .ic {
+  width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--teal-soft); color: var(--teal); font-size: .95rem; flex-shrink: 0;
+}
+.lab-head b { font-size: .95rem; }
+.lab-note { font-size: .84rem; color: var(--ink-3); margin: 10px 0 0; }
+
+.ctl-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.ctl { display: flex; flex-direction: column; gap: 5px; }
+.ctl label { font-size: .82rem; font-weight: 650; color: var(--ink-2); display: flex; justify-content: space-between; gap: 8px; }
+.ctl label .v { font-family: var(--f-mono); color: var(--teal); font-weight: 700; }
+.ctl input[type="range"] {
+  width: 100%; height: 6px; border-radius: 3px; -webkit-appearance: none; appearance: none;
+  background: var(--surface-3); outline: none; cursor: pointer;
+}
+.ctl input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--teal); border: 3px solid var(--surface); box-shadow: var(--sh-1); cursor: pointer;
+}
+.ctl input[type="range"]::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--surface);
+  background: var(--teal); box-shadow: var(--sh-1); cursor: pointer;
+}
+
+.readout {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 16px;
+}
+.readout .cell {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm);
+  padding: 11px 13px; text-align: center;
+}
+.readout .cell .k { font-size: .74rem; color: var(--ink-4); font-weight: 600; }
+.readout .cell .v { font-family: var(--f-mono); font-size: 1.2rem; font-weight: 700; color: var(--teal); margin-top: 2px; }
+.readout .cell.warn .v { color: var(--terra); }
+.readout .cell.bad .v { color: var(--danger); }
+.readout .cell.good .v { color: var(--ok); }
+
+/* ===================== SVG диаграм ===================== */
+.chart { width: 100%; height: auto; overflow: visible; }
+.chart .axis { stroke: var(--line-2); stroke-width: 1; }
+.chart .grid-l { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 3; }
+.chart .tick { font-size: 10px; fill: var(--ink-4); font-family: var(--f-sans); }
+.chart .tick-b { font-size: 11px; fill: var(--ink-3); font-weight: 600; font-family: var(--f-sans); }
+.chart .bar { fill: var(--sky); transition: fill .2s; }
+.chart .bar.hot { fill: var(--terra); }
+.chart .line { fill: none; stroke: var(--terra); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.chart .line2 { fill: none; stroke: var(--teal); stroke-width: 2.5; stroke-linejoin: round; }
+.chart .dot-m { fill: var(--terra); stroke: var(--surface); stroke-width: 1.6; }
+.chart .area { fill: color-mix(in srgb, var(--teal) 18%, transparent); }
+.chart .lbl { font-size: 10px; fill: var(--ink-2); font-family: var(--f-mono); }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 10px; font-size: .8rem; color: var(--ink-3); }
+.chart-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+/* ===================== Контур зураг (изогипс лаб) ===================== */
+.contour-map { width: 100%; height: auto; cursor: crosshair; touch-action: none; }
+.contour-map .cline { fill: none; stroke: var(--terra); stroke-width: 1.4; opacity: .85; }
+.contour-map .cline.major { stroke-width: 2.4; }
+.contour-map .cfill { opacity: .5; }
+.contour-map .clbl { font-size: 9px; fill: var(--terra); font-weight: 700; font-family: var(--f-mono); }
+.contour-map .pick { fill: var(--teal); stroke: #fff; stroke-width: 2; }
+.contour-map .pick.b { fill: var(--plum); }
+.contour-map .seg { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 5 4; }
+
+/* ===================== Луужин (азимут лаб) ===================== */
+.compass { display: block; margin: 0 auto; cursor: grab; touch-action: none; max-width: 300px; }
+.compass:active { cursor: grabbing; }
+.compass .face { fill: var(--surface); stroke: var(--line-2); stroke-width: 2; }
+.compass .ring { fill: none; stroke: var(--line); stroke-width: 1; }
+.compass .tickm { stroke: var(--ink-4); stroke-width: 1.4; }
+.compass .tickm.maj { stroke: var(--ink-2); stroke-width: 2.2; }
+.compass .card { font-size: 13px; font-weight: 800; fill: var(--ink-2); font-family: var(--f-sans); }
+.compass .needle-n { fill: var(--danger); }
+.compass .needle-s { fill: var(--ink-4); }
+.compass .target { fill: none; stroke: var(--gold); stroke-width: 3; stroke-dasharray: 4 4; }
+
+/* ===================== Хүн амын пирамид ===================== */
+.pyramid { width: 100%; height: auto; }
+.pyramid .m { fill: var(--sky); }
+.pyramid .f { fill: var(--plum); }
+.pyramid .agelbl { font-size: 9px; fill: var(--ink-4); font-family: var(--f-mono); }
+
+/* ===================== Картограм ===================== */
+.choro { width: 100%; height: auto; }
+.choro path.a { stroke: var(--surface); stroke-width: 1; cursor: pointer; transition: opacity .15s; }
+.choro path.a:hover { opacity: .75; }
+.choro .cdot { cursor: pointer; stroke: var(--surface); stroke-width: 1.5; transition: r .15s; }
+.choro .cdot:hover { stroke: var(--ink); }
+.choro text { font-size: 10px; fill: var(--ink-3); font-family: var(--f-sans); pointer-events: none; }
+.scale-bar { display: flex; align-items: center; gap: 8px; justify-content: center; margin-top: 10px; font-size: .76rem; color: var(--ink-4); }
+.scale-bar .sw { display: flex; border-radius: 4px; overflow: hidden; border: 1px solid var(--line); }
+.scale-bar .sw i { width: 26px; height: 13px; display: block; }
+
+/* ===================== Хүснэгт ===================== */
+.il-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.il-table th, .il-table td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: left; }
+.il-table th {
+  font-size: .74rem; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-4);
+  font-weight: 700; background: var(--surface-2); cursor: pointer; user-select: none; white-space: nowrap;
+}
+.il-table th:hover { color: var(--teal); }
+.il-table th.sorted::after { content: " ▾"; color: var(--teal); }
+.il-table th.sorted.asc::after { content: " ▴"; }
+.il-table td.num { font-family: var(--f-mono); text-align: right; }
+.il-table tbody tr:hover { background: var(--surface-2); }
+.il-table tbody tr.hl { background: var(--teal-soft); }
+
+/* ===================== Хэмжүүр (gauge) ===================== */
+.gauge-wrap { text-align: center; }
+.gauge { width: 190px; height: 108px; margin: 0 auto; }
+.gauge .track { fill: none; stroke: var(--surface-3); stroke-width: 16; stroke-linecap: round; }
+.gauge .val { fill: none; stroke-width: 16; stroke-linecap: round; transition: stroke-dashoffset .5s, stroke .3s; }
+.gauge-label { font-family: var(--f-display); font-size: 1.5rem; font-weight: 700; margin-top: -18px; }
+
+/* ===================== Харьцуулах хайрцаг ===================== */
+.vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 620px) { .vs-grid { grid-template-columns: 1fr; } }
+.vs-box { border: 1px solid var(--line); border-radius: var(--r-md); padding: 16px; background: var(--surface); }
+.vs-box h4 { margin: 0 0 8px; color: var(--teal); }
+.vs-box.b h4 { color: var(--terra); }
+.vs-box ul { margin: 0; padding-left: 18px; font-size: .89rem; color: var(--ink-2); line-height: 1.6; }
+
+/* ===================== Шалгах алхам ===================== */
+.il-check { margin-top: 6px; }
+.il-check .q { font-weight: 650; margin-bottom: 10px; }
+.il-drop {
+  display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; min-height: 56px;
+  border: 2px dashed var(--line-2); border-radius: var(--r-md); background: var(--surface-2);
+}
+.il-drop.over { border-color: var(--teal); background: var(--teal-soft); }
+.tokn {
+  padding: 7px 13px; border-radius: var(--r-full); border: 1px solid var(--line-2);
+  background: var(--surface); font-size: .85rem; font-weight: 600; cursor: grab;
+}
+.tokn.ok { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); color: var(--ok); }
+.tokn.no { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); animation: shake .4s; }
+
+/* ===================== Галерей ===================== */
+.il-card { display: flex; flex-direction: column; height: 100%; padding: 0; overflow: hidden; }
+.il-cover { height: 116px; position: relative; display: grid; place-items: center; font-size: 2.4rem; }
+.il-cover.c7 { background: linear-gradient(135deg,#0f766e,#22a08e); }
+.il-cover.c8 { background: linear-gradient(135deg,#2563a5,#4d94d6); }
+.il-cover.c9 { background: linear-gradient(135deg,#7c3f7e,#b06fb2); }
+.il-cover .e { position: relative; z-index: 1; filter: drop-shadow(0 3px 8px rgba(0,0,0,.28)); }
+.il-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.il-body h3 { margin: 0; font-size: 1.12rem; }
+.il-body p { margin: 0; font-size: .91rem; color: var(--ink-3); flex: 1; }
+.il-feat { display: flex; flex-wrap: wrap; gap: 6px; }
+.il-feat span {
+  font-size: .74rem; padding: 3px 9px; border-radius: var(--r-full);
+  background: var(--surface-3); color: var(--ink-3); font-weight: 600;
+}

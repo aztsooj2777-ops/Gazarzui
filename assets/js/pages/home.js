@@ -138,6 +138,46 @@
     reveal(host);
   }
 
+  /* ---------------- 4b. Интерактив хичээлийн урьдчилсан ---------------- */
+  /* Тайлбар: бүрэн тодорхойлолт нь interactive.html дээр ачаалагдана.
+     Нүүр хуудсыг хөнгөн байлгах үүднээс энд зөвхөн товч мэдээллийг хадгална. */
+  const IL_PREVIEW = [
+    { id: "g7", grade: 7, emoji: "🧭", title: "Газрын зураг унших: масштаб, изогипс, азимут",
+      summary: "Контур зураг дээр огтлолын профайл байгуулж, луужингаар азимут тогтоох дадлага.",
+      features: ["Контур зураг", "Огтлолын профайл", "Луужин"] },
+    { id: "g8", grade: 8, emoji: "❄️", title: "Монголын уур амьсгал: эрс тэс байдлын механизм",
+      summary: "Климатограмм унших, Сибирийн антициклоны ажиллагааг симуляцаар харах, зудын эрсдэлийг загварчлах.",
+      features: ["Климатограмм", "Антициклоны симуляц", "Зудын загвар"] },
+    { id: "g9", grade: 9, emoji: "👥", title: "Хүн ам зүй: нягтшил, пирамид, шилжих хөдөлгөөн",
+      summary: "Аймгийн нягтшлыг картограмаар харах, нас-хүйсийн пирамид байгуулах, шилжилтийг загварчлах.",
+      features: ["Картограм", "Пирамид", "Шилжилтийн загвар"] },
+  ];
+
+  function initInteractive() {
+    const host = $("#interactivePreview");
+    if (!host) return;
+    const done = GZ.store.progress();
+    host.innerHTML = IL_PREVIEW.map((L, i) => `
+      <div class="reveal" data-delay="${i * 70}">
+        <a class="card card-hover il-card" href="interactive.html?id=${L.id}">
+          <div class="il-cover c${L.grade}">
+            <div class="topo"></div>
+            <span class="e">${L.emoji}</span>
+            ${done["il-" + L.id] ? '<span class="badge ok" style="position:absolute;top:12px;right:12px;z-index:2">✓ Дууссан</span>' : ""}
+          </div>
+          <div class="il-body">
+            <div class="row" style="gap:6px;flex-wrap:wrap">
+              <span class="badge teal">${L.grade}-р анги</span><span class="badge gold">40 минут</span>
+            </div>
+            <h3>${GZ.esc(L.title)}</h3>
+            <p>${GZ.esc(L.summary)}</p>
+            <div class="il-feat">${L.features.map((f) => `<span>${GZ.esc(f)}</span>`).join("")}</div>
+          </div>
+        </a>
+      </div>`).join("");
+    reveal(host);
+  }
+
   function reveal(host) {
     if (!("IntersectionObserver" in window)) { GZ.$$(".reveal", host).forEach((e) => e.classList.add("in")); return; }
     const io = new IntersectionObserver((en) => {
@@ -151,7 +191,7 @@
     GZ.$$(".reveal", host).forEach((e) => io.observe(e));
   }
 
-  function boot() { initFacts(); initDaily(); initLessons(); initGames(); }
+  function boot() { initFacts(); initDaily(); initInteractive(); initLessons(); initGames(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();

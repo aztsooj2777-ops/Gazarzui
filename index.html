@@ -6,6 +6,25 @@
 <title>Газарзүй — Ц. Азцоож багшийн нээлттэй сургалтын орчин</title>
 <meta name="description" content="Газарзүйн хичээл, ЭЕШ-ийн сорил, интерактив тоглоом, AI багш чатбот. 7–9 ангийн сурагчдад зориулсан үнэгүй, нээлттэй сургалтын платформ.">
 <meta name="theme-color" content="#f7f4ed">
+
+<!-- ===== Нийгмийн сүлжээнд хуваалцах (Open Graph / Twitter) ===== -->
+<link rel="canonical" href="https://gazarzui.vercel.app/index.html">
+<meta property="og:site_name" content="Газарзүй">
+<meta property="og:locale" content="mn_MN">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gazarzui.vercel.app/index.html">
+<meta property="og:title" content="Газарзүй — Ц. Азцоож багшийн нээлттэй сургалтын орчин">
+<meta property="og:description" content="22 хичээл, 95 сорил, 6 интерактив тоглоом, AI багш. 7–9 ангийн сурагчдад зориулсан бүрэн үнэгүй платформ.">
+<meta property="og:image" content="https://gazarzui.vercel.app/assets/img/og-cover.png">
+<meta property="og:image:secure_url" content="https://gazarzui.vercel.app/assets/img/og-cover.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Газарзүй — Ц. Азцоож багшийн нээлттэй сургалтын орчин">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Газарзүй — Ц. Азцоож багшийн нээлттэй сургалтын орчин">
+<meta name="twitter:description" content="22 хичээл, 95 сорил, 6 интерактив тоглоом, AI багш. 7–9 ангийн сурагчдад зориулсан бүрэн үнэгүй платформ.">
+<meta name="twitter:image" content="https://gazarzui.vercel.app/assets/img/og-cover.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230f766e'/%3E%3Cg fill='none' stroke='white' stroke-width='6' stroke-linecap='round'%3E%3Ccircle cx='50' cy='50' r='28'/%3E%3Cpath d='M22 50h56M50 22c9 9 13 18 13 28s-4 19-13 28c-9-9-13-18-13-28s4-19 13-28z'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +32,7 @@
 <link rel="stylesheet" href="assets/css/theme.css">
 <link rel="stylesheet" href="assets/css/ui.css">
 <link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/interactive.css">
 </head>
 <body>
 <div id="app-header"></div>
@@ -35,6 +55,7 @@
         </div>
         <div class="hero-stats">
           <div><div class="n" data-count="22">0</div><div class="l">Хичээл</div></div>
+          <div><div class="n" data-count="3">0</div><div class="l">Интерактив</div></div>
           <div><div class="n" data-count="180">0</div><div class="l">Сорилын асуулт</div></div>
           <div><div class="n" data-count="6">0</div><div class="l">Тоглоом</div></div>
           <div><div class="n">24/7</div><div class="l">AI туслах</div></div>
@@ -102,6 +123,21 @@
           <p>Асуултаа бич — тайлбар, жишээ, бодлогын алхмыг шууд авна.</p>
         </a>
       </div>
+    </div>
+  </section>
+
+  <!-- ================= ИНТЕРАКТИВ ХИЧЭЭЛ ================= -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="row between row-wrap mb32" style="align-items:flex-end">
+        <div class="sec-head" style="margin-bottom:0">
+          <span class="eyebrow">Шинэ · Интерактив</span>
+          <h2>40 минутын дадлагын хичээл</h2>
+          <p>Уншаад өнгөрөх биш — өөрөө хийж үзэх. Анги тус бүрд нэг бүтэн хичээл.</p>
+        </div>
+        <a class="btn btn-outline" href="interactive.html">Бүгдийг харах →</a>
+      </div>
+      <div class="grid g3" id="interactivePreview"></div>
     </div>
   </section>
 

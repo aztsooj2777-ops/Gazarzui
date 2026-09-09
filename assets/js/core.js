@@ -211,12 +211,13 @@
   const NAV = [
     { href: "index.html", label: "Нүүр" },
     { href: "lessons.html", label: "Хичээл" },
-    { href: "quiz.html", label: "Тест" },
+    { href: "interactive.html", label: "Интерактив" },
+    { href: "quiz.html", label: "Сорил" },
     { href: "games.html", label: "Тоглоом" },
     { href: "chat.html", label: "AI багш" },
-    { href: "community.html", label: "Хэлэлцүүлэг" },
-    { href: "resources.html", label: "Хэрэглэгдэхүүн" },
-    { href: "about.html", label: "Бидний тухай" },
+    { href: "materials.html", label: "Материал" },
+    { href: "community.html", label: "Форум" },
+    { href: "about.html", label: "Тухай" },
   ];
 
   function currentPage() {
@@ -324,6 +325,7 @@
               <h4>Сургалт</h4>
               <ul class="footer-links">
                 <li><a href="lessons.html">Хичээлүүд</a></li>
+                <li><a href="interactive.html">Интерактив хичээл</a></li>
                 <li><a href="quiz.html">Сорил / ЭЕШ</a></li>
                 <li><a href="games.html">Тоглоомууд</a></li>
                 <li><a href="chat.html">AI багш</a></li>
@@ -335,7 +337,8 @@
                 <li><a href="community.html">Хэлэлцүүлэг</a></li>
                 <li><a href="leaderboard.html">Тэргүүлэгчид</a></li>
                 <li><a href="profile.html">Миний профайл</a></li>
-                <li><a href="resources.html">Хэрэглэгдэхүүн</a></li>
+                <li><a href="materials.html">Материалын сан</a></li>
+                <li><a href="resources.html">Түргэн лавлах</a></li>
               </ul>
             </div>
             <div>
