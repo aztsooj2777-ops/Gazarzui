@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="mn" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI багш — Газарзүй</title>
+<meta name="description" content="Газарзүйн AI туслах. Асуултаа бич — тайлбар, жишээ, бодлогын алхмыг шууд аваарай.">
+<meta name="theme-color" content="#f7f4ed">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230f766e'/%3E%3Cg fill='none' stroke='white' stroke-width='6' stroke-linecap='round'%3E%3Ccircle cx='50' cy='50' r='28'/%3E%3Cpath d='M22 50h56M50 22c9 9 13 18 13 28s-4 19-13 28c-9-9-13-18-13-28s4-19 13-28z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/ui.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div id="app-header"></div>
+
+<main>
+  <section class="page-hero" style="padding-bottom:clamp(30px,4vw,44px)">
+    <div class="topo"></div>
+    <div class="wrap">
+      <div class="crumbs"><a href="index.html">Нүүр</a> <span>›</span> <span>AI багш</span></div>
+      <span class="eyebrow">Хиймэл оюунт туслах</span>
+      <h1>Асуухаас бүү эмээ</h1>
+      <p>Ойлгомжгүй сэдэв, бодлогын алхам, ЭЕШ-ийн зөвлөгөө — юуг ч асуугаарай. Хариулт нь Азцоож багшийн хичээлийн материалд суурилсан.</p>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="wrap chat-layout">
+      <aside>
+        <div class="card card-pad-sm mb16">
+          <h4 style="font-family:var(--f-sans);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-4);margin-bottom:10px">Сэдвүүд</h4>
+          <div class="topic-list" id="topicList"></div>
+        </div>
+        <div class="card card-pad-sm">
+          <h4 style="font-family:var(--f-sans);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-4);margin-bottom:10px">Хэрхэн ашиглах</h4>
+          <ul style="margin:0;padding-left:18px;font-size:.87rem;color:var(--ink-3);line-height:1.6">
+            <li>Тодорхой асуулт асуувал илүү сайн хариулна</li>
+            <li>«…гэж юу вэ?», «…яагаад вэ?» гэж эхэлж болно</li>
+            <li>Хариулт хангалтгүй бол сэдвийн нэрийг бич</li>
+            <li>Хичээл дээрх ойлголтыг шууд асууж болно</li>
+          </ul>
+          <div class="alert warn mt16" style="font-size:.83rem">
+            <span class="ic">⚠️</span>
+            <p>AI бол багшийн орлуулагч биш. Эргэлзсэн зүйлээ багшаасаа заавал асуугаарай.</p>
+          </div>
+        </div>
+      </aside>
+
+      <div>
+        <div class="chat-shell">
+          <div class="chat-head">
+            <div class="avatar">АЦ</div>
+            <div class="who">
+              <b>Газарзүйн AI туслах</b>
+              <small id="chatMode">Бэлэн</small>
+            </div>
+            <button class="icon-btn" id="clearChat" title="Яриаг цэвэрлэх" aria-label="Яриаг цэвэрлэх"></button>
+          </div>
+          <div class="chat-log" id="chatLog"></div>
+          <div class="chat-suggest" id="chatSuggest"></div>
+          <form class="chat-input" id="chatForm">
+            <textarea id="chatText" rows="1" placeholder="Асуултаа бичнэ үү… (Enter — илгээх)" aria-label="Асуулт"></textarea>
+            <button class="chat-send" id="chatSend" type="submit" aria-label="Илгээх"></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="app-footer"></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/data/kb.js"></script>
+<script src="assets/js/pages/chat.js"></script>
+</body>
+</html>

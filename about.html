@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="mn" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бидний тухай — Газарзүй</title>
+<meta name="description" content="Ц. Азцоож багш, платформын зорилго, холбоо барих мэдээлэл.">
+<meta name="theme-color" content="#f7f4ed">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230f766e'/%3E%3Cg fill='none' stroke='white' stroke-width='6' stroke-linecap='round'%3E%3Ccircle cx='50' cy='50' r='28'/%3E%3Cpath d='M22 50h56M50 22c9 9 13 18 13 28s-4 19-13 28c-9-9-13-18-13-28s4-19 13-28z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/ui.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div id="app-header"></div>
+
+<main>
+  <section class="page-hero">
+    <div class="topo"></div>
+    <div class="wrap">
+      <div class="crumbs"><a href="index.html">Нүүр</a> <span>›</span> <span>Бидний тухай</span></div>
+      <span class="eyebrow">Танилцуулга</span>
+      <h1>Ц. Азцоож — газарзүйн багш</h1>
+      <p>Газарзүйн хичээлийн арга зүйг түгээн дэлгэрүүлж, сурагчдын идэвх оролцоог нэмэгдүүлэх зорилготой нээлттэй цахим орчин.</p>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="wrap split">
+      <div>
+        <span class="eyebrow">Зорилго</span>
+        <h2>Яагаад энэ платформ вэ?</h2>
+        <p class="muted" style="font-size:1.02rem">
+          Газарзүйн хичээл ихэвчлэн «цээжлэх хичээл» гэж ойлгогддог. Гэтэл газарзүй бол
+          орчин тойрны юмс яагаад яг тэнд байгааг тайлбарладаг хамгийн практик шинжлэх ухаан юм.
+        </p>
+        <p class="muted" style="font-size:1.02rem">
+          Энэхүү орчин нь дараах гурван зүйлийг зорьж байна: сурагч бүр өөрийн хурдаар суралцах,
+          сурах явцаа тоглоом, сорилоор сонирхолтой болгох, асуултаа айлгүй асуух орчин бүрдүүлэх.
+        </p>
+        <ul class="num-list mt24">
+          <li><b>Хүртээмж</b><p>Ямар ч сургууль, ямар ч аймгийн сурагч интернэттэй бол ижил материалтай.</p></li>
+          <li><b>Идэвх оролцоо</b><p>Тоглоом, тэмдэг, тэргүүлэгчдийн жагсаалт нь давтахыг зуршил болгодог.</p></li>
+          <li><b>Хамтын мэдлэг</b><p>Хэлэлцүүлэгт нэг сурагчийн асуултад бүгд суралцана.</p></li>
+          <li><b>Нээлттэй байдал</b><p>Бүх агуулга үнэгүй. Кодыг нь өөр багш нар өөрийн хичээлдээ ашиглаж болно.</p></li>
+        </ul>
+      </div>
+
+      <div class="col" style="gap:16px">
+        <div class="card">
+          <div class="row" style="gap:16px;align-items:center">
+            <div class="avatar xl">АЦ</div>
+            <div>
+              <h3 style="margin:0 0 2px">Ц. Азцоож</h3>
+              <p class="muted" style="margin:0;font-size:.92rem" id="teacherTitle"></p>
+            </div>
+          </div>
+          <hr>
+          <div class="row between" style="font-size:.92rem"><span class="muted">Хичээл</span><b>Газарзүй, 7–9 анги</b></div>
+          <div class="row between" style="font-size:.92rem"><span class="muted">Бүс нутаг</span><b id="orgLine"></b></div>
+          <div class="row between" style="font-size:.92rem"><span class="muted">Чиглэл</span><b>Цахим сургалт, арга зүй</b></div>
+        </div>
+
+        <div class="card">
+          <h4 style="font-family:var(--f-sans);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-4);margin-bottom:12px">Платформын хамрах хүрээ</h4>
+          <div class="grid g2" style="gap:12px">
+            <div class="stat" style="padding:12px 6px"><div class="stat-num" style="font-size:1.7rem">22</div><div class="stat-label">Хичээл</div></div>
+            <div class="stat" style="padding:12px 6px"><div class="stat-num" style="font-size:1.7rem">95</div><div class="stat-label">Сорилын асуулт</div></div>
+            <div class="stat" style="padding:12px 6px"><div class="stat-num" style="font-size:1.7rem">6</div><div class="stat-label">Тоглоом</div></div>
+            <div class="stat" style="padding:12px 6px"><div class="stat-num" style="font-size:1.7rem">30+</div><div class="stat-label">AI сэдэв</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Хичээлийн арга зүй -->
+  <section class="section-sm" style="background:var(--surface-2);border-block:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head center">
+        <span class="eyebrow">Арга зүй</span>
+        <h2>Сурах гурван алхам</h2>
+        <p>Энэ платформ дээрх бүх зүйл эдгээр гурван алхмыг дэмжихээр зохион байгуулагдсан.</p>
+      </div>
+      <div class="grid g3">
+        <div class="card card-hover">
+          <div class="card-icon">1️⃣</div>
+          <h3>Ойлгох</h3>
+          <p class="muted">Хичээлийг уншиж, нэр томьёог тайлбартай нь эзэмшинэ. Ойлгомжгүй бол AI багшаас шууд асууна.</p>
+        </div>
+        <div class="card card-hover">
+          <div class="card-icon gold">2️⃣</div>
+          <h3>Бататгах</h3>
+          <p class="muted">Хичээл бүрийн төгсгөлийн дасгал, дараа нь ЭЕШ горимын сорилоор мэдлэгээ шалгана.</p>
+        </div>
+        <div class="card card-hover">
+          <div class="card-icon terra">3️⃣</div>
+          <h3>Тогтоох</h3>
+          <p class="muted">Тоглоомоор давтана. Байрлал, тоо баримт нь тоглох тусам өөрөө тархинд суурьшина.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Холбоо барих -->
+  <section class="section-sm" id="contact">
+    <div class="wrap split">
+      <div>
+        <span class="eyebrow">Холбоо барих</span>
+        <h2>Санал хүсэлт, асуулт</h2>
+        <p class="muted">
+          Материал хүсэх, алдаа мэдээлэх, хамтран ажиллах санал — бүгдийг нь энд бичээрэй.
+          Багш нар энэ платформыг өөрийн хичээлдээ ашиглахыг хүсвэл мөн бичээрэй.
+        </p>
+        <div class="col mt24" style="gap:10px">
+          <div class="row" style="gap:10px">
+            <span class="card-icon" style="width:38px;height:38px;margin:0;font-size:1rem">📧</span>
+            <a id="mailLink" href="#"></a>
+          </div>
+          <div class="row" style="gap:10px">
+            <span class="card-icon sky" style="width:38px;height:38px;margin:0;font-size:1rem">🏫</span>
+            <span id="orgLine2" class="muted"></span>
+          </div>
+          <div class="row" style="gap:10px">
+            <span class="card-icon terra" style="width:38px;height:38px;margin:0;font-size:1rem">🌐</span>
+            <a id="legacyLink2" target="_blank" rel="noopener">Өмнөх Google Sites хуудас</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:clamp(22px,3vw,32px)">
+        <form id="contactForm">
+          <div class="field">
+            <label for="cName">Таны нэр</label>
+            <input class="input" id="cName" name="name" required maxlength="60">
+          </div>
+          <div class="field">
+            <label for="cEmail">И-мэйл (заавал биш)</label>
+            <input class="input" id="cEmail" name="email" type="email" maxlength="120" placeholder="Хариу авахыг хүсвэл бичнэ үү">
+          </div>
+          <div class="field">
+            <label for="cBody">Захидал</label>
+            <textarea class="textarea" id="cBody" name="body" required maxlength="2000" placeholder="Санал, хүсэлт, асуултаа бичнэ үү…"></textarea>
+          </div>
+          <button class="btn btn-primary btn-block btn-lg" type="submit">Илгээх</button>
+          <div id="contactMsg" class="mt16"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="app-footer"></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/store.js"></script>
+<script>
+(function () {
+  function boot() {
+    var GZ = window.GZ, S = window.GZ_CONFIG.SITE || {};
+    document.getElementById("teacherTitle").textContent = S.teacherTitle || "";
+    document.getElementById("orgLine").textContent = S.org || "";
+    document.getElementById("orgLine2").textContent = S.org || "";
+    var ml = document.getElementById("mailLink");
+    ml.href = "mailto:" + (S.email || ""); ml.textContent = S.email || "";
+    document.getElementById("legacyLink2").href = S.legacyUrl || "#";
+
+    document.getElementById("contactForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var f = e.target, btn = f.querySelector("button");
+      var fd = new FormData(f);
+      btn.disabled = true; btn.textContent = "Илгээж байна…";
+      await GZ.store.sendMessage({
+        name: String(fd.get("name")).trim(),
+        email: String(fd.get("email") || "").trim() || null,
+        body: String(fd.get("body")).trim()
+      });
+      f.reset();
+      btn.disabled = false; btn.textContent = "Илгээх";
+      document.getElementById("contactMsg").innerHTML =
+        '<div class="alert ok"><span class="ic">✅</span><p>Захидал хүлээн авлаа. Баярлалаа!' +
+        (GZ.store.mode === "cloud" ? "" : " (Оффлайн горимд зөвхөн энэ төхөөрөмжид хадгалагдсан.)") + "</p></div>";
+      GZ.toast("Захидал илгээгдлээ.", "ok");
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+</body>
+</html>

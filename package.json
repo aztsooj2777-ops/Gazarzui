@@ -1,0 +1,13 @@
+{
+  "name": "gazarzui-surgalt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Ц. Азцоож багшийн газарзүйн нээлттэй сургалтын платформ — статик сайт + Vercel serverless AI функц",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.124.0"
+  }
+}

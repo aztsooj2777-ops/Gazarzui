@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="mn" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Газарзүй — Ц. Азцоож багшийн нээлттэй сургалтын орчин</title>
+<meta name="description" content="Газарзүйн хичээл, ЭЕШ-ийн сорил, интерактив тоглоом, AI багш чатбот. 7–9 ангийн сурагчдад зориулсан үнэгүй, нээлттэй сургалтын платформ.">
+<meta name="theme-color" content="#f7f4ed">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230f766e'/%3E%3Cg fill='none' stroke='white' stroke-width='6' stroke-linecap='round'%3E%3Ccircle cx='50' cy='50' r='28'/%3E%3Cpath d='M22 50h56M50 22c9 9 13 18 13 28s-4 19-13 28c-9-9-13-18-13-28s4-19 13-28z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/ui.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div id="app-header"></div>
+
+<main>
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="topo"></div>
+    <div class="wrap hero-inner">
+      <div>
+        <span class="eyebrow">Ц. Азцоож багш · Прогресс сургууль</span>
+        <h1>Газарзүйг <span class="hl">нээж үзье</span> — дэлхий чиний ангид</h1>
+        <p class="hero-lead">
+          Хичээл, сорил, интерактив тоглоом, AI багш нэг дор. Ховд аймгаас эхэлсэн энэ орчин
+          Монголын хаанаас ч холбогдож болох, бүрэн үнэгүй нээлттэй платформ юм.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg" href="lessons.html">Хичээл үзэх</a>
+          <a class="btn btn-light btn-lg" href="chat.html">AI багштай ярих</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="n" data-count="22">0</div><div class="l">Хичээл</div></div>
+          <div><div class="n" data-count="180">0</div><div class="l">Сорилын асуулт</div></div>
+          <div><div class="n" data-count="6">0</div><div class="l">Тоглоом</div></div>
+          <div><div class="n">24/7</div><div class="l">AI туслах</div></div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="globe-card">
+          <h4>Мэдэх үү?</h4>
+          <div class="fact-rotator" id="factBox">
+            <p class="q">Ачаалж байна…</p>
+            <p class="a"></p>
+          </div>
+          <div class="fact-dots" id="factDots"></div>
+        </div>
+        <div class="hero-mini-grid">
+          <a class="hero-mini" href="quiz.html"><div class="e">🎯</div><div class="t">Сорил</div></a>
+          <a class="hero-mini" href="games.html"><div class="e">🎮</div><div class="t">Тоглоом</div></a>
+          <a class="hero-mini" href="community.html"><div class="e">💬</div><div class="t">Хэлэлцүүлэг</div></a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-wave"><svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 60V26c180 22 360 30 540 22s360-30 540-34 240 6 360 18v28z"/></svg></div>
+  </section>
+
+  <!-- ================= ЮУ МЭДЭХ ВЭ? ================= -->
+  <section class="section" id="know">
+    <div class="wrap">
+      <div class="sec-head center">
+        <span class="eyebrow">Өдөр тутмын сорилт</span>
+        <h2>Газарзүйн талаар юу мэдэх вэ?</h2>
+        <p>Өдөр бүр шинэчлэгддэг 5 асуулт. Хэдийг нь мэдэх вэ — одоо шалгаад үз.</p>
+      </div>
+      <div id="dailyBox" class="card" style="max-width:760px;margin-inline:auto;padding:clamp(20px,3vw,34px)"></div>
+    </div>
+  </section>
+
+  <!-- ================= ГОЛ БОЛОМЖУУД ================= -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head center">
+        <span class="eyebrow">Юу байгаа вэ</span>
+        <h2>Суралцах дөрвөн зам</h2>
+        <p>Уншиж ойлго, дасгалаар бататга, тоглож цээжил, ойлгоогүйгээ асуу.</p>
+      </div>
+      <div class="grid g4">
+        <a class="card card-hover reveal" href="lessons.html">
+          <div class="card-icon">📖</div>
+          <h3>Хичээл</h3>
+          <p>7, 8, 9-р ангийн 22 бүтэн хичээл — тайлбар, нэр томьёо, дасгалын хамт.</p>
+        </a>
+        <a class="card card-hover reveal" href="quiz.html" data-delay="80">
+          <div class="card-icon gold">🎯</div>
+          <h3>Сорил / ЭЕШ</h3>
+          <p>180+ асуулт, цаг хэмжсэн ЭЕШ горим, буруу хариулт бүрд тайлбар.</p>
+        </a>
+        <a class="card card-hover reveal" href="games.html" data-delay="160">
+          <div class="card-icon terra">🎮</div>
+          <h3>Тоглоом</h3>
+          <p>Аймаг таних, далбаа, газарзүйн үг, нэр томьёо тааруулах — 6 тоглоом.</p>
+        </a>
+        <a class="card card-hover reveal" href="chat.html" data-delay="240">
+          <div class="card-icon sky">🤖</div>
+          <h3>AI багш</h3>
+          <p>Асуултаа бич — тайлбар, жишээ, бодлогын алхмыг шууд авна.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ХИЧЭЭЛҮҮД ================= -->
+  <section class="section" style="background:var(--surface-2);border-block:1px solid var(--line)">
+    <div class="wrap">
+      <div class="row between row-wrap mb32" style="align-items:flex-end">
+        <div class="sec-head" style="margin-bottom:0">
+          <span class="eyebrow">Хичээлийн сан</span>
+          <h2>Хаанаас эхлэх вэ?</h2>
+          <p>Анги, сэдвээр нь шүүж, өөрийн хурдаар суралц.</p>
+        </div>
+        <a class="btn btn-outline" href="lessons.html">Бүх хичээл →</a>
+      </div>
+      <div class="grid g3" id="featuredLessons"></div>
+    </div>
+  </section>
+
+  <!-- ================= ТОГЛООМ ================= -->
+  <section class="section">
+    <div class="wrap">
+      <div class="sec-head center">
+        <span class="eyebrow">Тоглож сур</span>
+        <h2>Цээжлэх биш — тоглох</h2>
+        <p>Байрлал, нэр томьёо, тоо баримтыг тархинд суулгах хамгийн хурдан арга.</p>
+      </div>
+      <div class="grid g3" id="gamePreview"></div>
+    </div>
+  </section>
+
+  <!-- ================= БАГШ ================= -->
+  <section class="section" style="background:var(--surface-2);border-block:1px solid var(--line)">
+    <div class="wrap split">
+      <div>
+        <span class="eyebrow">Багшийн үг</span>
+        <h2>Газарзүй бол цээжлэх хичээл биш</h2>
+        <blockquote style="margin:0 0 22px;padding:18px 24px;border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 var(--r-md) var(--r-md) 0;font-family:var(--f-display);font-size:1.1rem">
+          «Хаана?» гэсэн асуултын ард үргэлж «Яагаад яг тэнд?» гэсэн асуулт нуугдаж байдаг.
+          Хоёр дахь асуултыг асууж сурсан сурагч газарзүйч болно.
+        </blockquote>
+        <p class="muted">
+          Энэхүү платформ нь газарзүйн хичээлийн арга зүйг түгээх, сурагчдын идэвх оролцоог нэмэгдүүлэх,
+          өөрөө өөрийгөө хөгжүүлэх боломж бүрдүүлэх зорилготой.
+        </p>
+        <div class="row row-wrap mt24">
+          <a class="btn btn-primary" href="about.html">Багшийн тухай</a>
+          <a class="btn btn-ghost" href="community.html">Хэлэлцүүлэгт нэгдэх</a>
+        </div>
+      </div>
+      <div class="grid g2" style="gap:14px">
+        <div class="card stat reveal"><div class="stat-num" data-count="21">0</div><div class="stat-label">Аймаг зурагт</div></div>
+        <div class="card stat reveal" data-delay="60"><div class="stat-num" data-count="180">0</div><div class="stat-label">Сорилын асуулт</div></div>
+        <div class="card stat reveal" data-delay="120"><div class="stat-num" data-count="60">0</div><div class="stat-label">Нэр томьёо</div></div>
+        <div class="card stat reveal" data-delay="180"><div class="stat-num" data-count="26">0</div><div class="stat-label">Сонирхолтой баримт</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section class="section">
+    <div class="wrap">
+      <div class="cta-band">
+        <div class="topo"></div>
+        <span class="eyebrow" style="color:#7fe3d4">Нэгдээрэй</span>
+        <h2>Өнөөдөр 10 минут — сард 5 цаг</h2>
+        <p>Өдөрт нэг сорил, нэг тоглоом. Оноогоо цуглуулж, анги, сургуулиараа тэргүүлээрэй.</p>
+        <div class="row center row-wrap mt24">
+          <a class="btn btn-light btn-lg" href="auth.html">Үнэгүй бүртгүүлэх</a>
+          <a class="btn btn-primary btn-lg" href="quiz.html">Сорил эхлүүлэх</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="app-footer"></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/data/lessons-a.js"></script>
+<script src="assets/js/data/lessons-b.js"></script>
+<script src="assets/js/data/quizbank.js"></script>
+<script src="assets/js/data/geodata.js"></script>
+<script src="assets/js/parts.js"></script>
+<script src="assets/js/pages/home.js"></script>
+</body>
+</html>
