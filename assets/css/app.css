@@ -514,3 +514,45 @@
   .map-gallery { grid-template-columns: 1fr; }
   .map-thumb { aspect-ratio: 16 / 10; }
 }
+
+/* ==========================================================================
+   ЭРХИЙН СИСТЕМ — бүртгэл, багшийн самбар, файл байршуулалт
+   ========================================================================== */
+
+/* ---- Бүртгэлийн эрх сонгох ---- */
+.role-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 460px) { .role-pick { grid-template-columns: 1fr; } }
+.role-opt {
+  position: relative; display: flex; flex-direction: column; gap: 2px;
+  padding: 15px 14px; cursor: pointer; text-align: center;
+  border: 2px solid var(--line-2); border-radius: var(--r-md);
+  background: var(--surface); transition: all .18s;
+}
+.role-opt:hover { border-color: color-mix(in srgb, var(--teal) 50%, transparent); }
+.role-opt input { position: absolute; opacity: 0; pointer-events: none; }
+.role-opt .e { font-size: 1.7rem; line-height: 1.1; }
+.role-opt b { font-size: .96rem; }
+.role-opt small { font-size: .76rem; color: var(--ink-4); line-height: 1.4; }
+.role-opt.on { border-color: var(--teal); background: var(--teal-soft); }
+.role-opt.on b { color: var(--teal); }
+
+/* ---- Хэрэглэгчийн дүрс дээрх эрхийн тэмдэг ---- */
+.avatar.tch { background: linear-gradient(135deg, #0f766e, #22a08e); box-shadow: 0 0 0 2px color-mix(in srgb, var(--teal) 40%, transparent); }
+.avatar.adm { background: linear-gradient(135deg, #c2571a, #e08a3c); box-shadow: 0 0 0 2px color-mix(in srgb, var(--terra) 45%, transparent); }
+
+/* ---- Файл байршуулах талбар ---- */
+.upload-zone {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 26px 18px; text-align: center; cursor: pointer;
+  border: 2px dashed var(--line-2); border-radius: var(--r-md);
+  background: var(--surface-2); transition: all .18s;
+}
+.upload-zone:hover, .upload-zone:focus-visible { border-color: var(--teal); background: var(--teal-soft); }
+.upload-zone.over { border-color: var(--teal); background: var(--teal-soft); transform: scale(1.005); }
+.upload-zone .uz-ic { font-size: 1.8rem; line-height: 1; margin-bottom: 4px; }
+.upload-zone b { font-size: .95rem; }
+.upload-zone small { font-size: .8rem; }
+
+/* ---- Багшийн хичээлийн мөр ---- */
+.tl-row .post-actions { border-top: 1px solid var(--line); padding-top: 12px; }
+details summary::-webkit-details-marker { color: var(--teal); }

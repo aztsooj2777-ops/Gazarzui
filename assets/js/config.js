@@ -21,10 +21,12 @@ window.GZ_CONFIG = {
   SUPABASE_URL: "https://mecskpyrzyafdhqqozgj.supabase.co",
   SUPABASE_KEY: "sb_publishable_h3McdBDPyJTwadrwm2Qm3Q_sUAY5YA8",
 
-  /* Vercel дээр /api/chat serverless функц ажиллаж байвал AI багш жинхэнэ
-     хэлний загвартай холбогдоно. Хоосон/боломжгүй үед суурилагдсан
-     мэдлэгийн сан ашиглана. */
-  CHAT_API: "/api/chat",
+  /* AI багш — суурилагдсан мэдлэгийн сангаар ажиллана (нэмэлт төлбөргүй).
+     Хэрэв ирээдүйд жинхэнэ хэлний загвартай холбохыг хүсвэл:
+       1) Vercel дээр ANTHROPIC_API_KEY орчны хувьсагч нэмнэ
+       2) энд "/api/chat" гэж бичнэ
+     Хоосон байвал /api/chat руу огт хандахгүй. */
+  CHAT_API: "",
 
   SITE: {
     name: "Газарзүй",

@@ -1,12 +1,14 @@
 /* ==========================================================================
-   Нэвтрэх / Бүртгүүлэх
+   Нэвтрэх / Бүртгүүлэх — сурагч эсвэл багшийн эрхээр
    ========================================================================== */
 (function () {
   "use strict";
   const GZ = window.GZ, $ = GZ.$, esc = GZ.esc;
 
-  let mode = "in";
-  const next = new URLSearchParams(location.search).get("next") || "profile.html";
+  const qs = new URLSearchParams(location.search);
+  const next = qs.get("next") || "profile.html";
+  let role = qs.get("role") === "teacher" ? "teacher" : "student";
+  let mode = qs.get("role") ? "up" : "in";
 
   async function boot() {
     await GZ.store.ready;
@@ -35,6 +37,7 @@
       GZ.$$("#authTabs button").forEach((x) => x.classList.toggle("active", x === b));
       render();
     });
+    GZ.$$("#authTabs button").forEach((x) => x.classList.toggle("active", x.dataset.t === mode));
     render();
   }
 
@@ -48,8 +51,42 @@
       <form id="authForm">
         ${mode === "up" ? `
         <div class="field">
+          <label>Та хэн бэ?</label>
+          <div class="role-pick" id="rolePick">
+            <label class="role-opt${role === "student" ? " on" : ""}">
+              <input type="radio" name="role" value="student"${role === "student" ? " checked" : ""}>
+              <span class="e">🎒</span>
+              <b>Сурагч</b>
+              <small>Хичээл үзэх, сорил өгөх, тоглох</small>
+            </label>
+            <label class="role-opt${role === "teacher" ? " on" : ""}">
+              <input type="radio" name="role" value="teacher"${role === "teacher" ? " checked" : ""}>
+              <span class="e">👩‍🏫</span>
+              <b>Багш</b>
+              <small>Хичээл байршуулах, хэлэлцүүлэг хийх</small>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
           <label for="fName">Нэр</label>
           <input class="input" id="fName" name="name" required maxlength="60" placeholder="Б. Номин" autocomplete="name">
+        </div>
+
+        <div id="teacherFields" class="${role === "teacher" ? "" : "hidden"}">
+          <div class="grid g2" style="gap:0 14px">
+            <div class="field">
+              <label for="fSchool">Сургууль</label>
+              <input class="input" id="fSchool" name="school" maxlength="80" placeholder="Прогресс сургууль">
+            </div>
+            <div class="field">
+              <label for="fSubject">Заадаг хичээл</label>
+              <input class="input" id="fSubject" name="subject" maxlength="60" placeholder="Газарзүй">
+            </div>
+          </div>
+          <div class="alert warn mb16" style="font-size:.85rem"><span class="ic">ℹ️</span>
+            <p>Багшийн эрхийг админ багш баталгаажуулна. Түүн хүртэл таны нэмсэн хичээл
+            хяналтын жагсаалтад орж, батлагдсаны дараа нийтлэгдэнэ.</p></div>
         </div>` : ""}
         <div class="field">
           <label for="fEmail">И-мэйл</label>
@@ -73,6 +110,16 @@
       <p class="muted tc mt8" style="font-size:.8rem">Зочин горимд оноо энэ төхөөрөмжид хадгалагдана.</p>`;
 
     $("#authForm").addEventListener("submit", submit);
+
+    // Эрхийн сонголт
+    const pick = $("#rolePick");
+    if (pick) pick.addEventListener("change", (e) => {
+      role = e.target.value;
+      GZ.$$(".role-opt", pick).forEach((o) =>
+        o.classList.toggle("on", o.querySelector("input").checked));
+      $("#teacherFields").classList.toggle("hidden", role !== "teacher");
+    });
+
     $("#guestBtn").addEventListener("click", () => {
       GZ.modal({
         title: "Зочны нэр",
@@ -104,7 +151,13 @@
     const fd = new FormData(f);
     try {
       if (mode === "up") {
-        const r = await GZ.store.signUp(fd.get("email"), fd.get("password"), String(fd.get("name")).trim());
+        const r = await GZ.store.signUp(
+          fd.get("email"), fd.get("password"), String(fd.get("name")).trim(),
+          {
+            role: fd.get("role") === "teacher" ? "teacher" : "student",
+            school: String(fd.get("school") || "").trim(),
+            subject: String(fd.get("subject") || "").trim(),
+          });
         if (r.needsConfirm) {
           err.innerHTML = `<div class="alert ok mb16"><span class="ic">📧</span>
             <p>И-мэйл хаяг руу баталгаажуулах холбоос илгээлээ. Түүнийг дарсны дараа нэвтэрнэ үү.</p></div>`;

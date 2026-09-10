@@ -335,13 +335,22 @@
       slot.innerHTML = `<a class="btn btn-primary btn-sm" href="auth.html">Нэвтрэх</a>`;
       return;
     }
+    const S = GZ.store;
+    const rl = S.roleLabel ? S.roleLabel(u.role, u.verified) : { t: "", cls: "" };
+    const isTeacher = S.isTeacher && S.isTeacher();
+    const isAdmin = S.isAdmin && S.isAdmin();
+
     slot.innerHTML = `
       <div style="position:relative">
-        <button class="avatar sm" id="avaBtn" title="${esc(u.name)}" style="border:0">${esc(initials(u.name))}</button>
-        <div id="avaMenu" class="card card-pad-sm hidden" style="position:absolute;right:0;top:46px;width:216px;z-index:120;box-shadow:var(--sh-3)">
+        <button class="avatar sm${isAdmin ? " adm" : isTeacher ? " tch" : ""}" id="avaBtn"
+                title="${esc(u.name)}" style="border:0">${esc(initials(u.name))}</button>
+        <div id="avaMenu" class="card card-pad-sm hidden" style="position:absolute;right:0;top:46px;width:238px;z-index:120;box-shadow:var(--sh-3)">
           <div style="font-weight:700">${esc(u.name)}</div>
-          <div class="muted" style="font-size:.8rem;margin-bottom:10px">${esc(u.email || "Оффлайн профайл")}</div>
-          <a class="btn btn-ghost btn-sm btn-block" href="profile.html">Миний профайл</a>
+          <div class="muted" style="font-size:.8rem">${esc(u.email || "Оффлайн профайл")}</div>
+          ${rl.t ? `<div style="margin:7px 0 10px"><span class="badge ${rl.cls}">${esc(rl.t)}</span></div>` : ""}
+          ${isAdmin ? '<a class="btn btn-accent btn-sm btn-block" href="admin.html">Админ самбар</a>' : ""}
+          ${isTeacher ? `<a class="btn btn-outline btn-sm btn-block" href="teach.html" style="margin-top:${isAdmin ? 4 : 0}px">Багшийн самбар</a>` : ""}
+          <a class="btn btn-ghost btn-sm btn-block" href="profile.html" style="margin-top:4px">Миний профайл</a>
           <a class="btn btn-ghost btn-sm btn-block" href="leaderboard.html" style="margin-top:4px">Тэргүүлэгчид</a>
           <button class="btn btn-ghost btn-sm btn-block" id="outBtn" style="margin-top:4px;color:var(--danger)">Гарах</button>
         </div>
@@ -390,6 +399,8 @@
               <h4>Нийгэмлэг</h4>
               <ul class="footer-links">
                 <li><a href="community.html">Хэлэлцүүлэг</a></li>
+                <li><a href="teach.html">Багшийн самбар</a></li>
+                <li><a href="auth.html?role=teacher&amp;next=teach.html">Багшаар бүртгүүлэх</a></li>
                 <li><a href="leaderboard.html">Тэргүүлэгчид</a></li>
                 <li><a href="profile.html">Миний профайл</a></li>
                 <li><a href="materials.html">Материалын сан</a></li>

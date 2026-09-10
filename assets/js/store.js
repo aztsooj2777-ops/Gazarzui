@@ -79,13 +79,31 @@
       name: (prof && prof.display_name) || (authUser.email || "Сурагч").split("@")[0],
       grade: prof && prof.grade,
       school: prof && prof.school,
+      subject: prof && prof.subject,
+      role: (prof && prof.role) || "student",
+      verified: !!(prof && prof.verified),
     };
     emit();
   }
 
+  /* ---------------- Эрх ---------------- */
+  store.isTeacher = () => !!store.user && (store.user.role === "teacher" || store.user.role === "admin");
+  store.isAdmin = () => !!store.user && store.user.role === "admin";
+  store.canPublish = () => !!store.user && (store.user.role === "admin" || (store.user.role === "teacher" && store.user.verified));
+
+  store.roleLabel = function (role, verified) {
+    if (role === "admin") return { t: "Админ багш", cls: "terra" };
+    if (role === "teacher") return verified
+      ? { t: "Багш", cls: "teal" }
+      : { t: "Багш (хүлээгдэж буй)", cls: "gold" };
+    return { t: "Сурагч", cls: "" };
+  };
+
   function initLocal() {
     store.mode = "local";
-    store.user = LS.get("user", null);
+    const u = LS.get("user", null);
+    if (u && !u.role) { u.role = "student"; u.verified = false; }   // хуучин профайл
+    store.user = u;
     emit();
   }
 
@@ -106,16 +124,24 @@
   document.addEventListener("gz:auth", stamp);
 
   /* ================= AUTH ================= */
-  store.signUp = async function (email, password, name) {
+  store.signUp = async function (email, password, name, extra) {
+    const meta = Object.assign({ display_name: name, role: "student" }, extra || {});
+    if (meta.role !== "teacher" && meta.role !== "student") meta.role = "student";
+
     if (store.mode === "cloud") {
       const { data, error } = await store.sb.auth.signUp({
-        email, password, options: { data: { display_name: name } },
+        email, password, options: { data: meta },
       });
       if (error) throw error;
       if (data.user && !data.session) return { needsConfirm: true };
       return { needsConfirm: false };
     }
-    const u = { id: "local-" + Date.now().toString(36), name: name || email.split("@")[0], email };
+    const u = {
+      id: "local-" + Date.now().toString(36),
+      name: name || email.split("@")[0], email,
+      role: meta.role, verified: false,
+      school: meta.school || null, subject: meta.subject || null,
+    };
     LS.set("user", u); store.user = u; emit();
     return { needsConfirm: false };
   };
@@ -127,13 +153,16 @@
       return true;
     }
     const u = LS.get("user", null);
-    const nu = u && u.email === email ? u : { id: "local-" + Date.now().toString(36), name: email.split("@")[0], email };
+    const nu = u && u.email === email ? u : { id: "local-" + Date.now().toString(36), name: email.split("@")[0], email, role: "student", verified: false };
     LS.set("user", nu); store.user = nu; emit();
     return true;
   };
 
   store.guest = function (name) {
-    const u = { id: "guest-" + Date.now().toString(36), name: name || "Зочин сурагч", email: null, guest: true };
+    const u = {
+      id: "guest-" + Date.now().toString(36), name: name || "Зочин сурагч",
+      email: null, guest: true, role: "student", verified: false,
+    };
     LS.set("user", u); store.user = u; emit();
     return u;
   };
@@ -347,6 +376,218 @@
     (all[postId] = all[postId] || []).push(rec);
     LS.set("comments", all);
     return rec;
+  };
+
+  /* ================= БАГШИЙН ОРУУЛСАН ХИЧЭЭЛ =================
+     Баталгаажсан багшийн хичээл шууд нийтлэгдэнэ (status = published).
+     Баталгаажаагүй бол «pending» болж, админ багш хянана. */
+  const ulLocal = () => LS.get("userLessons", []);
+  const ulSave = (rows) => LS.set("userLessons", rows);
+
+  store.listUserLessons = async function (opts) {
+    const o = opts || {};
+    if (store.mode === "cloud") {
+      try {
+        let q = store.sb.from("user_lessons").select("*").order("created_at", { ascending: false }).limit(200);
+        if (o.status) q = q.eq("status", o.status);
+        if (o.mine && store.user) q = q.eq("user_id", store.user.id);
+        const { data, error } = await q;
+        if (error) throw error;
+        return data || [];
+      } catch (e) { console.warn("user_lessons:", e.message); return []; }
+    }
+    let rows = ulLocal();
+    if (o.status) rows = rows.filter((r) => r.status === o.status);
+    if (o.mine && store.user) rows = rows.filter((r) => r.user_id === store.user.id);
+    return rows;
+  };
+
+  store.addUserLesson = async function (L) {
+    if (!store.user) throw new Error("Нэвтрээгүй байна.");
+    const status = store.canPublish() ? "published" : "pending";
+    const rec = Object.assign({
+      id: "ul" + Date.now().toString(36),
+      user_id: store.user.id,
+      author_name: store.user.name,
+      status, views: 0,
+      created_at: new Date().toISOString(),
+    }, L);
+
+    if (store.mode === "cloud" && !String(store.user.id).startsWith("guest")) {
+      const payload = {
+        user_id: rec.user_id, author_name: rec.author_name,
+        title: rec.title, summary: rec.summary, body: rec.body || null,
+        kind: rec.kind, url: rec.url || null, track: rec.track,
+        grade: rec.grade || null, tags: rec.tags || [], files: rec.files || [],
+      };
+      const { data, error } = await store.sb.from("user_lessons").insert(payload).select().maybeSingle();
+      if (error) throw error;
+      return data || rec;                 // статусыг сервер талын триггер тогтооно
+    }
+    const rows = ulLocal(); rows.unshift(rec); ulSave(rows);
+    return rec;
+  };
+
+  store.updateUserLesson = async function (id, patch) {
+    if (store.mode === "cloud") {
+      const { error } = await store.sb.from("user_lessons")
+        .update(Object.assign({ updated_at: new Date().toISOString() }, patch)).eq("id", id);
+      if (error) throw error;
+      return true;
+    }
+    const rows = ulLocal();
+    const r = rows.find((x) => x.id === id);
+    if (r) Object.assign(r, patch);
+    ulSave(rows);
+    return true;
+  };
+
+  store.deleteUserLesson = async function (id) {
+    if (store.mode === "cloud") {
+      const { error } = await store.sb.from("user_lessons").delete().eq("id", id);
+      if (error) throw error;
+      return true;
+    }
+    ulSave(ulLocal().filter((x) => x.id !== id));
+    return true;
+  };
+
+  /* ---- Файл байршуулах (видео, зураг, хөтөлбөр, баримт) ---- */
+  store.MAX_FILE = 50 * 1024 * 1024;              // 50 МБ
+
+  store.uploadFile = async function (file, onProgress) {
+    if (!store.user) throw new Error("Нэвтрээгүй байна.");
+    if (file.size > store.MAX_FILE) throw new Error("Файл 50 МБ-аас их байна.");
+
+    const safe = file.name.replace(/[^\w.\-]+/g, "_").slice(-80);
+    const path = `${store.user.id}/${Date.now()}_${safe}`;
+
+    if (store.mode === "cloud" && !String(store.user.id).startsWith("guest")) {
+      const { error } = await store.sb.storage.from("lesson-files")
+        .upload(path, file, { cacheControl: "3600", upsert: false });
+      if (error) throw error;
+      const { data } = store.sb.storage.from("lesson-files").getPublicUrl(path);
+      return { name: file.name, path, url: data.publicUrl, type: file.type, size: file.size };
+    }
+
+    // Оффлайн горим — жижиг файлыг санах ойд base64-ээр хадгална
+    if (file.size > 3 * 1024 * 1024) {
+      throw new Error("Оффлайн горимд 3 МБ хүртэл файл дэмжинэ. Supabase холбоно уу.");
+    }
+    const url = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = () => rej(new Error("Файл уншиж чадсангүй."));
+      r.readAsDataURL(file);
+    });
+    if (onProgress) onProgress(100);
+    return { name: file.name, path, url, type: file.type, size: file.size, local: true };
+  };
+
+  store.deleteFile = async function (path) {
+    if (store.mode !== "cloud" || !path) return true;
+    try { await store.sb.storage.from("lesson-files").remove([path]); } catch (e) {}
+    return true;
+  };
+
+  /* ---- Хичээл дээрх багш нарын хэлэлцүүлэг ---- */
+  store.listLessonComments = async function (lessonId) {
+    if (store.mode === "cloud") {
+      try {
+        const { data, error } = await store.sb.from("lesson_comments")
+          .select("*").eq("lesson_id", lessonId).order("created_at");
+        if (error) throw error;
+        return data || [];
+      } catch (e) { return []; }
+    }
+    return (LS.get("lessonComments", {})[lessonId]) || [];
+  };
+
+  store.addLessonComment = async function (lessonId, body) {
+    if (!store.user) throw new Error("Нэвтрээгүй байна.");
+    if (!store.isTeacher()) throw new Error("Зөвхөн багш санал бичих боломжтой.");
+    const rec = {
+      id: "lc" + Date.now().toString(36), lesson_id: lessonId,
+      user_id: store.user.id, author_name: store.user.name,
+      author_role: store.user.role, body, created_at: new Date().toISOString(),
+    };
+    if (store.mode === "cloud" && !String(store.user.id).startsWith("guest")) {
+      const { data, error } = await store.sb.from("lesson_comments").insert({
+        lesson_id: lessonId, user_id: rec.user_id, author_name: rec.author_name,
+        author_role: rec.author_role, body,
+      }).select().maybeSingle();
+      if (error) throw error;
+      return data || rec;
+    }
+    const all = LS.get("lessonComments", {});
+    (all[lessonId] = all[lessonId] || []).push(rec);
+    LS.set("lessonComments", all);
+    return rec;
+  };
+
+  store.deleteLessonComment = async function (id, lessonId) {
+    if (store.mode === "cloud") {
+      const { error } = await store.sb.from("lesson_comments").delete().eq("id", id);
+      if (error) throw error;
+      return true;
+    }
+    const all = LS.get("lessonComments", {});
+    if (all[lessonId]) all[lessonId] = all[lessonId].filter((c) => c.id !== id);
+    LS.set("lessonComments", all);
+    return true;
+  };
+
+  /* ================= АДМИН ================= */
+  store.listProfiles = async function () {
+    if (store.mode === "cloud") {
+      try {
+        const { data, error } = await store.sb.from("profiles")
+          .select("id,display_name,role,verified,school,subject,grade,created_at")
+          .order("created_at", { ascending: false }).limit(300);
+        if (error) throw error;
+        return data || [];
+      } catch (e) { console.warn("profiles:", e.message); return []; }
+    }
+    return store.user ? [{
+      id: store.user.id, display_name: store.user.name, role: store.user.role,
+      verified: store.user.verified, school: store.user.school,
+      subject: store.user.subject, created_at: new Date().toISOString(),
+    }] : [];
+  };
+
+  store.setUserRole = async function (id, role, verified) {
+    if (store.mode === "cloud") {
+      const { error } = await store.sb.from("profiles").update({ role, verified }).eq("id", id);
+      if (error) throw error;
+      return true;
+    }
+    if (store.user && store.user.id === id) {
+      store.user.role = role; store.user.verified = verified;
+      LS.set("user", store.user); emit();
+    }
+    return true;
+  };
+
+  store.deletePost = async function (id) {
+    if (store.mode === "cloud") {
+      const { error } = await store.sb.from("posts").delete().eq("id", id);
+      if (error) throw error;
+      return true;
+    }
+    LS.set("posts", (LS.get("posts", []) || []).filter((p) => p.id !== id));
+    return true;
+  };
+
+  store.listMessages = async function () {
+    if (store.mode === "cloud") {
+      try {
+        const { data, error } = await store.sb.from("messages").select("*")
+          .order("created_at", { ascending: false }).limit(200);
+        if (error) throw error;
+        return data || [];
+      } catch (e) { return []; }
+    }
+    return LS.get("messages", []);
   };
 
   /* ================= САНАЛ ХҮСЭЛТ ================= */
