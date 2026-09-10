@@ -542,3 +542,44 @@
   .mn-map .plbl { font-size: 17px; stroke-width: 4px; }
   .mn-map .prov { stroke-width: 1.6; }
 }
+
+/* ==========================================================================
+   ТАНИЛЦУУЛГА — багшийн хөрөг, зорилгын хайрцаг
+   ========================================================================== */
+.teacher-card { padding: 0; overflow: hidden; }
+.teacher-card > hr:first-of-type { margin: 0 0 14px; }
+.teacher-card > *:not(.teacher-photo):not(hr) { padding-inline: 24px; }
+.teacher-card > .row:last-child { padding-bottom: 20px; }
+
+.teacher-photo { margin: 0; position: relative; }
+.teacher-photo img {
+  width: 100%; aspect-ratio: 4 / 3.4; object-fit: cover; object-position: 50% 22%;
+  display: block; background: var(--surface-3);
+}
+.teacher-photo figcaption {
+  position: absolute; inset: auto 0 0 0; z-index: 1;
+  padding: 46px 20px 16px;
+  background: linear-gradient(to top, rgba(6,22,30,.88), rgba(6,22,30,.55) 55%, transparent);
+  color: #fff; display: flex; flex-direction: column; line-height: 1.35;
+}
+.teacher-photo figcaption b { font-family: var(--f-display); font-size: 1.35rem; font-weight: 700; }
+.teacher-photo figcaption span { font-size: .87rem; color: rgba(255,255,255,.82); }
+
+/* Зорилгын хайрцаг — эх сайтын «ЗОРИЛГО» блокийг санагдуулна */
+.goal-box {
+  position: relative; margin: 20px 0 24px;
+  padding: 20px 22px 20px 24px;
+  border: 2px solid color-mix(in srgb, var(--sky) 45%, transparent);
+  border-radius: var(--r-md);
+  background: var(--sky-soft);
+}
+.goal-label {
+  display: inline-block; margin-bottom: 10px;
+  font-family: var(--f-display); font-weight: 700; font-size: 1.1rem;
+  letter-spacing: .06em; color: var(--danger);
+}
+.goal-box p {
+  margin: 0; color: var(--ink-2); font-size: 1rem; line-height: 1.75;
+  text-align: justify; font-weight: 500;
+}
+[data-theme="dark"] .goal-label { color: #ff9d94; }

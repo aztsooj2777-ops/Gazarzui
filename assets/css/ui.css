@@ -314,3 +314,55 @@ table.tbl tbody tr:hover { background: var(--surface-2); }
 *::-webkit-scrollbar-track { background: transparent; }
 *::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
 *::-webkit-scrollbar-thumb:hover { background: var(--ink-4); background-clip: content-box; }
+
+/* ===================== Дэд цэс (dropdown) ===================== */
+.nav-item { position: relative; }
+.nav-toggle {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 8px 12px; border: 0; border-radius: var(--r-sm);
+  background: transparent; color: var(--ink-2);
+  font-size: .935rem; font-weight: 500; white-space: nowrap;
+  transition: background .18s, color .18s;
+}
+.nav-toggle:hover { background: var(--surface-3); color: var(--ink); }
+.nav-toggle.active { color: var(--teal); font-weight: 650; }
+.nav-toggle .caret { display: inline-flex; transition: transform .2s; }
+.nav-toggle .caret svg { width: 15px; height: 15px; }
+.nav-item.open .nav-toggle { background: var(--surface-3); color: var(--teal); }
+.nav-item.open .nav-toggle .caret { transform: rotate(180deg); }
+
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 130;
+  min-width: 268px; padding: 8px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-md); box-shadow: var(--sh-3);
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity .18s, transform .18s, visibility .18s;
+}
+.nav-item.open .nav-drop { opacity: 1; visibility: visible; transform: none; }
+.nav-drop a {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 9px 11px; border-radius: var(--r-sm);
+  color: var(--ink-2); text-decoration: none; transition: background .16s;
+}
+.nav-drop a:hover { background: var(--surface-3); text-decoration: none; }
+.nav-drop a.active { background: var(--teal-soft); }
+.nav-drop a.active .dt b { color: var(--teal); }
+.nav-drop .di { font-size: 1.05rem; line-height: 1.35; flex-shrink: 0; }
+.nav-drop .dt { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; }
+.nav-drop .dt b { font-size: .9rem; font-weight: 600; color: var(--ink); }
+.nav-drop .dt small { font-size: .76rem; color: var(--ink-4); }
+
+/* Гар утсанд дэд цэс нь доогуураа задарна */
+@media (max-width: 1160px) {
+  .nav-item { width: 100%; }
+  .nav-toggle { width: 100%; justify-content: space-between; padding: 12px 14px; font-size: 1rem; }
+  .nav-drop {
+    position: static; opacity: 1; visibility: visible; transform: none;
+    box-shadow: none; border: 0; border-left: 2px solid var(--line);
+    border-radius: 0; margin: 2px 0 6px 16px; padding: 0 0 0 6px;
+    min-width: 0; max-height: 0; overflow: hidden;
+    transition: max-height .25s ease;
+  }
+  .nav-item.open .nav-drop { max-height: 420px; }
+}

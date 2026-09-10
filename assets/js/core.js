@@ -201,6 +201,7 @@
     download: '<path d="M12 3v12M7 11l5 5 5-5M4 21h16"/>',
     mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
     layers: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>',
+    chev: '<path d="M6 9l6 6 6-6"/>',
   };
   function icon(name, size) {
     const p = ICONS[name] || "";
@@ -210,15 +211,28 @@
   /* ---------------- Nav ---------------- */
   const NAV = [
     { href: "index.html", label: "Нүүр" },
+    { href: "about.html", label: "Тухай" },
     { href: "lessons.html", label: "Хичээл" },
     { href: "interactive.html", label: "Интерактив" },
-    { href: "quiz.html", label: "Сорил" },
-    { href: "games.html", label: "Тоглоом" },
+    {
+      label: "Материал",
+      children: [
+        { href: "materials.html", label: "Материалын сан", icon: "📚", note: "ЭЕШ, олимпиад, геологи" },
+        { href: "materials.html#maps", label: "Газарзүйн зураг", icon: "🗺️", note: "Зураг, атлас, гарын авлага" },
+        { href: "quiz.html", label: "Сорил / ЭЕШ", icon: "🎯", note: "95 асуулт, ЭЕШ горим" },
+        { href: "games.html", label: "Тоглоом", icon: "🎮", note: "6 интерактив тоглоом" },
+        { href: "resources.html", label: "Түргэн лавлах", icon: "📐", note: "Тоо баримт, томьёо" },
+      ],
+    },
     { href: "chat.html", label: "AI багш" },
-    { href: "materials.html", label: "Материал" },
     { href: "community.html", label: "Форум" },
-    { href: "about.html", label: "Тухай" },
   ];
+
+  /* Дэд цэсийн аль нэг нь идэвхтэй эсэх */
+  function navIsActive(item, cur) {
+    if (item.href) return item.href === cur;
+    return (item.children || []).some((c) => c.href.split("#")[0] === cur);
+  }
 
   function currentPage() {
     const p = location.pathname.split("/").pop();
@@ -241,7 +255,25 @@
             </span>
           </a>
           <nav class="nav" id="mainnav">
-            ${NAV.map((n) => `<a href="${n.href}"${n.href === cur ? ' class="active" aria-current="page"' : ""}>${esc(n.label)}</a>`).join("")}
+            ${NAV.map((n, i) => {
+              const act = navIsActive(n, cur);
+              if (!n.children) {
+                return `<a href="${n.href}"${act ? ' class="active" aria-current="page"' : ""}>${esc(n.label)}</a>`;
+              }
+              return `
+                <div class="nav-item" data-drop="${i}">
+                  <button class="nav-toggle${act ? " active" : ""}" aria-expanded="false" aria-haspopup="true">
+                    ${esc(n.label)} <span class="caret">${icon("chev")}</span>
+                  </button>
+                  <div class="nav-drop" role="menu">
+                    ${n.children.map((c) => `
+                      <a href="${c.href}" role="menuitem"${c.href.split("#")[0] === cur ? ' class="active"' : ""}>
+                        <span class="di">${c.icon || ""}</span>
+                        <span class="dt"><b>${esc(c.label)}</b>${c.note ? `<small>${esc(c.note)}</small>` : ""}</span>
+                      </a>`).join("")}
+                  </div>
+                </div>`;
+            }).join("")}
           </nav>
           <div class="nav-actions">
             <button class="icon-btn" id="themeBtn" aria-label="Өнгө солих" title="Гэрэл / харанхуй">${icon("sun")}</button>
@@ -259,6 +291,29 @@
       const open = nav.classList.toggle("open");
       burger.setAttribute("aria-expanded", String(open));
       burger.innerHTML = icon(open ? "x" : "menu");
+    });
+
+    /* Дэд цэс нээх / хаах */
+    $$(".nav-item", nav).forEach((item) => {
+      const btn = $(".nav-toggle", item);
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const open = !item.classList.contains("open");
+        $$(".nav-item", nav).forEach((x) => x.classList.remove("open"));
+        item.classList.toggle("open", open);
+        btn.setAttribute("aria-expanded", String(open));
+      });
+    });
+    document.addEventListener("click", () => {
+      $$(".nav-item", nav).forEach((x) => {
+        x.classList.remove("open");
+        const b = $(".nav-toggle", x);
+        if (b) b.setAttribute("aria-expanded", "false");
+      });
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      $$(".nav-item", nav).forEach((x) => x.classList.remove("open"));
     });
 
     const bar = $("#topbar");

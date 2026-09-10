@@ -42,6 +42,17 @@
     });
 
     render();
+
+    // Хаягт #maps гэх мэт заалт байвал тухайн ангилалыг сонгож гүйлгэнэ
+    const hash = (location.hash || "").replace("#", "");
+    if (hash && GZ.MAT_GROUPS.some((g) => g.id === hash)) {
+      const chip = GZ.$$("#matChips .chip").find((c) => c.dataset.g === hash);
+      if (chip) chip.click();
+      setTimeout(() => {
+        const sec = document.getElementById(hash);
+        if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 120);
+    }
   }
 
   function match(it) {
@@ -76,7 +87,7 @@
       }
 
       html += `
-        <section style="margin-bottom:40px">
+        <section id="${g.id}" style="margin-bottom:40px;scroll-margin-top:calc(var(--nav-h) + 90px)">
           <div class="row row-wrap" style="gap:12px;align-items:flex-start;margin-bottom:16px">
             <div class="card-icon" style="margin:0;width:44px;height:44px;background:color-mix(in srgb, ${g.color} 15%, transparent);color:${g.color}">${g.icon}</div>
             <div style="flex:1;min-width:220px">
