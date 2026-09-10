@@ -82,6 +82,13 @@
             </div>
             <div class="grid g4">${items.filter((i) => i.year === y).map(card).join("")}</div>
           </div>`).join("");
+      } else if (g.gallery) {
+        // Зурган материалыг урьдчилан харуулна, бусдыг энгийн картаар
+        const pics = items.filter((i) => i.img);
+        const docs = items.filter((i) => !i.img);
+        inner =
+          (pics.length ? `<div class="grid g2 map-gallery">${pics.map(picCard).join("")}</div>` : "") +
+          (docs.length ? `<div class="grid g-auto" style="margin-top:${pics.length ? 18 : 0}px">${docs.map(card).join("")}</div>` : "");
       } else {
         inner = `<div class="grid g-auto">${items.map(card).join("")}</div>`;
       }
@@ -105,6 +112,45 @@
         <div class="big">🔍</div><h3>Материал олдсонгүй</h3>
         <p>Өөр түлхүүр үгээр хайж үзнэ үү.</p>
       </div>`;
+
+    bindGallery();
+  }
+
+  /* Зурган материалын карт — урьдчилан харагдац + томруулах */
+  function picCard(it) {
+    return `
+      <figure class="map-card" data-img="${esc(it.f)}" data-t="${esc(it.t)}" tabindex="0" role="button"
+              aria-label="${esc(it.t)} — томруулж харах">
+        <span class="map-thumb"><img src="${esc(it.f)}" alt="${esc(it.t)}" loading="lazy"></span>
+        <figcaption>
+          <b>${esc(it.t)}</b>
+          ${it.note ? `<small>${esc(it.note)}</small>` : ""}
+          <span class="row" style="gap:6px;margin-top:8px">
+            <span class="badge teal">Томруулах</span>
+            <a class="badge" href="${esc(it.f)}" download onclick="event.stopPropagation()">↓ Татах</a>
+          </span>
+        </figcaption>
+      </figure>`;
+  }
+
+  /* Зураг томруулж харах цонх */
+  function bindGallery() {
+    GZ.$$(".map-card").forEach((c) => {
+      const open = () => GZ.modal({
+        title: c.dataset.t,
+        wide: true,
+        content: `<img src="${esc(c.dataset.img)}" alt="${esc(c.dataset.t)}"
+            style="width:100%;height:auto;border-radius:var(--r-sm);background:var(--surface-3)">
+          <div class="row row-wrap mt16" style="gap:8px">
+            <a class="btn btn-primary btn-sm" href="${esc(c.dataset.img)}" download>↓ Татаж авах</a>
+            <a class="btn btn-outline btn-sm" href="${esc(c.dataset.img)}" target="_blank" rel="noopener">Шинэ табд бүтэн хэмжээгээр</a>
+          </div>`,
+      });
+      c.addEventListener("click", open);
+      c.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
+      });
+    });
   }
 
   function card(it) {

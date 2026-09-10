@@ -49,79 +49,32 @@
   };
 
   /* ------------------------------------------------------------------
-     Багшийн өөрийн бэлтгэсэн хичээлийн карт (онцгойлон ялгагдана)
+     Гадаад платформ дээрх хичээлийн карт.
+     Бусад хичээлтэй ижил харагдана — онцгойлон ялгаагүй.
+     Ялгаа нь зөвхөн эх сурвалжийн тэмдэг ба шинэ табд нээгддэг явдал.
      ------------------------------------------------------------------ */
   GZ.teacherCard = function (t) {
-    const media = t.kind === "video"
-      ? `<div class="tl-media">
-           <div class="topo"></div>
-           <img src="${GZ.esc(t.thumb)}" alt="${GZ.esc(t.title)}" loading="lazy"
-                onerror="this.style.display='none'">
-           <span class="play"><i></i></span>
-           ${t.year ? `<span class="dur">${t.year}</span>` : ""}
-         </div>`
-      : `<div class="tl-media">
-           <div class="topo"></div>
-           <div class="ext"><div class="e">${t.emoji}</div><div class="p">${GZ.esc(t.source)}</div></div>
-         </div>`;
-
-    const credit = t.author
-      ? `<b>${GZ.esc(t.author)}</b><small>Хичээл боловсруулсан · ${GZ.esc(t.source)}</small>`
-      : `<b>${GZ.esc(t.source)}</b><small>Нийтлэгдсэн эх сурвалж</small>`;
-
+    const cls = t.grade === 7 ? "g7" : t.grade === 8 ? "g8" : t.grade === 9 ? "g9"
+      : t.grade === 11 ? "g11" : "geo";
     return `
-      <a class="tl-card" href="${GZ.esc(t.url)}" target="_blank" rel="noopener"
-         data-tl="${GZ.esc(t.id)}">
-        <span class="tl-ribbon">★ Багшийн хичээл</span>
-        ${media}
-        <div class="tl-body">
+      <a class="card card-hover lesson-card" href="${GZ.esc(t.url)}" target="_blank" rel="noopener">
+        <div class="lesson-cover ${cls}">
+          <div class="topo"></div>
+          <span class="e">${t.emoji}</span>
+        </div>
+        <div class="lesson-body">
           <div class="row" style="gap:6px;flex-wrap:wrap">
-            <span class="badge gold">${GZ.esc(t.track)}</span>
-            ${t.kind === "video" ? '<span class="badge terra">Видео</span>' : '<span class="badge sky">Интерактив</span>'}
-            ${t.unit ? `<span class="badge">${GZ.esc(t.unit)}</span>` : ""}
+            <span class="badge teal">${GZ.esc(t.track)}</span>
+            <span class="badge">${t.kind === "video" ? "Видео" : "Цахим хичээл"}</span>
           </div>
           <h3>${GZ.esc(t.title)}</h3>
-          <p class="sum">${GZ.esc(t.summary)}</p>
-          ${t.note ? `<p class="muted" style="font-size:.82rem;margin:0">${GZ.esc(t.note)}</p>` : ""}
-          <div class="tl-author">
-            <span class="av">${GZ.esc(GZ.initials(t.author || t.source))}</span>
-            <span class="who">${credit}</span>
-            <span class="spacer"></span>
-            <span style="color:var(--gold);flex-shrink:0">${GZ.icon(t.kind === "video" ? "play" : "arrow", 18)}</span>
+          <p>${GZ.esc(t.summary)}</p>
+          <div class="lesson-meta">
+            <span>${GZ.icon("arrow", 14)} ${GZ.esc(t.source)}</span>
+            ${t.author ? `<span>${GZ.icon("user", 14)} ${GZ.esc(t.author)}</span>` : ""}
           </div>
         </div>
       </a>`;
-  };
-
-  /* Багшийн хичээлийн картуудыг идэвхжүүлэх (видеог сайт дээрээ тоглуулна) */
-  GZ.bindTeacherCards = function (root) {
-    GZ.$$("[data-tl]", root || document).forEach((a) => {
-      const t = (GZ.TEACHER_LESSONS || []).find((x) => x.id === a.dataset.tl);
-      if (!t || t.kind !== "video") return;          // гадаад хичээл шинэ табд нээгдэнэ
-      a.addEventListener("click", (e) => {
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return; // шинэ табд нээх
-        e.preventDefault();
-        GZ.modal({
-          title: t.title,
-          wide: true,
-          content: `
-            <div class="vid-frame">
-              <iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.videoId)}?rel=0&modestbranding=1"
-                title="${GZ.esc(t.title)}" allowfullscreen
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"></iframe>
-            </div>
-            <div class="row row-wrap mt16" style="gap:8px">
-              <span class="badge gold">${GZ.esc(t.track)}</span>
-              <span class="badge terra">Видео хичээл</span>
-              <span class="badge">${GZ.esc(t.source)}</span>
-            </div>
-            <p class="muted mt16" style="font-size:.92rem">${GZ.esc(t.summary)}</p>
-            <a class="btn btn-outline btn-sm" href="${GZ.esc(t.url)}" target="_blank" rel="noopener">
-              YouTube дээр нээх ↗</a>`,
-        });
-      });
-    });
   };
 
   /* Тоглоомын карт */
