@@ -94,7 +94,7 @@
       }
 
       html += `
-        <section id="${g.id}" style="margin-bottom:40px;scroll-margin-top:calc(var(--nav-h) + 90px)">
+        <section id="${g.id}" style="margin-bottom:40px;scroll-margin-top:calc(var(--nav-h) + 20px)">
           <div class="row row-wrap" style="gap:12px;align-items:flex-start;margin-bottom:16px">
             <div class="card-icon" style="margin:0;width:44px;height:44px;background:color-mix(in srgb, ${g.color} 15%, transparent);color:${g.color}">${g.icon}</div>
             <div style="flex:1;min-width:220px">
