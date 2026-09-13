@@ -144,3 +144,17 @@ update public.profiles set verified = true where role in ('teacher', 'admin');
 
 -- хяналт хүлээж байсан хичээлүүдийг нийтлэх
 update public.user_lessons set status = 'published' where status = 'pending';
+
+-- ---------------------------------------------------------------------------
+-- 7) ШАЛГАХ — RUN дарсны дараа доорх хүснэгт гарч ирнэ.
+--    aztsooj2iiph@moes.edu.mn мөрөнд role = admin байх ёстой.
+-- ---------------------------------------------------------------------------
+select u.email,
+       p.display_name,
+       p.role,
+       p.verified,
+       p.created_at
+  from public.profiles p
+  join auth.users u on u.id = p.id
+ order by case p.role when 'admin' then 0 when 'teacher' then 1 else 2 end,
+          p.display_name;
