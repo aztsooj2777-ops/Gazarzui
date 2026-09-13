@@ -1,14 +1,14 @@
 /* ==========================================================================
    Админ самбар — зөвхөн админ багш
-   - Хичээл батлах / буцаах / устгах
-   - Багшийн эрх баталгаажуулах, эрх солих
-   - Санал хүсэлт унших
+   - Хичээл батлах шаардлагагүй: багш нар шууд нийтэлнэ
+   - Админ буруу агуулгыг нуух / устгах
+   - Хэрэглэгчийн эрх солих, санал хүсэлт унших
    ========================================================================== */
 (function () {
   "use strict";
   const GZ = window.GZ, $ = GZ.$, esc = GZ.esc;
 
-  let tab = "pending";
+  let tab = "all";
   let cacheLessons = [], cacheProfiles = [];
 
   async function boot() {
@@ -38,8 +38,8 @@
 
     root.innerHTML = `
       <div class="tabs" id="adminTabs">
-        <button data-t="pending"${tab === "pending" ? ' class="active"' : ""}>Хүлээгдэж буй</button>
         <button data-t="all"${tab === "all" ? ' class="active"' : ""}>Бүх хичээл</button>
+        <button data-t="hidden"${tab === "hidden" ? ' class="active"' : ""}>Нуусан</button>
         <button data-t="teachers"${tab === "teachers" ? ' class="active"' : ""}>Багш нар</button>
         <button data-t="messages"${tab === "messages" ? ' class="active"' : ""}>Санал хүсэлт</button>
       </div>
@@ -59,43 +59,50 @@
   async function refreshStats() {
     cacheLessons = await GZ.store.listUserLessons({});
     cacheProfiles = await GZ.store.listProfiles();
-    const pend = cacheLessons.filter((l) => l.status === "pending").length;
     const pub = cacheLessons.filter((l) => l.status === "published").length;
+    const hid = cacheLessons.filter((l) => l.status !== "published").length;
     const teachers = cacheProfiles.filter((p) => p.role === "teacher").length;
-    const unver = cacheProfiles.filter((p) => p.role === "teacher" && !p.verified).length;
+    const w = 'style="background:rgba(255,255,255,.16);color:#fff"';
     $("#adminStats").innerHTML = `
-      <span class="badge ${pend ? "gold" : ""}" style="${pend ? "" : "background:rgba(255,255,255,.16);color:#fff"}">
-        ${pend} хүлээгдэж буй</span>
-      <span class="badge" style="background:rgba(255,255,255,.16);color:#fff">${pub} нийтлэгдсэн</span>
-      <span class="badge" style="background:rgba(255,255,255,.16);color:#fff">${teachers} багш</span>
-      ${unver ? `<span class="badge gold">${unver} баталгаажаагүй</span>` : ""}
-      <span class="badge" style="background:rgba(255,255,255,.16);color:#fff">${cacheProfiles.length} хэрэглэгч</span>`;
+      <span class="badge" ${w}>${pub} нийтлэгдсэн хичээл</span>
+      ${hid ? `<span class="badge gold">${hid} нуусан</span>` : ""}
+      <span class="badge" ${w}>${teachers} багш</span>
+      <span class="badge" ${w}>${cacheProfiles.length} хэрэглэгч</span>`;
   }
 
   function body() {
     if (tab === "teachers") return teachersView();
     if (tab === "messages") return messagesView();
-    return lessonsView(tab === "pending" ? "pending" : null);
+    return lessonsView(tab === "hidden");
   }
 
   /* ---------------- Хичээл ---------------- */
   const KIND = { text: "📄 Бичмэл", video: "🎬 Бичлэг", link: "🔗 Холбоос" };
-  const STATUS = { published: ["ok", "Нийтлэгдсэн"], pending: ["gold", "Хүлээгдэж буй"], rejected: ["danger", "Буцаагдсан"] };
+  const STATUS = {
+    published: ["ok", "Нийтлэгдсэн"],
+    hidden: ["gold", "Нуусан"],
+    pending: ["gold", "Хүлээгдэж буй"],
+    rejected: ["danger", "Буцаагдсан"],
+  };
 
-  async function lessonsView(onlyStatus) {
+  async function lessonsView(onlyHidden) {
     const host = $("#adminBody");
     host.innerHTML = `<div class="card"><div class="row"><div class="spinner"></div><span class="muted">Ачаалж байна…</span></div></div>`;
     cacheLessons = await GZ.store.listUserLessons({});
-    const rows = onlyStatus ? cacheLessons.filter((l) => l.status === onlyStatus) : cacheLessons;
+    const rows = onlyHidden ? cacheLessons.filter((l) => l.status !== "published") : cacheLessons;
 
     if (!rows.length) {
-      host.innerHTML = `<div class="empty card"><div class="big">${onlyStatus ? "✅" : "📭"}</div>
-        <h3>${onlyStatus ? "Хүлээгдэж буй хичээл алга" : "Хичээл алга"}</h3>
-        <p>${onlyStatus ? "Бүх хичээл хянагдсан байна." : "Багш нар хичээл нэмээгүй байна."}</p></div>`;
+      host.innerHTML = `<div class="empty card"><div class="big">${onlyHidden ? "✅" : "📭"}</div>
+        <h3>${onlyHidden ? "Нуусан хичээл алга" : "Хичээл алга"}</h3>
+        <p>${onlyHidden ? "Бүх хичээл нээлттэй нийтлэгдсэн байна." : "Багш нар хичээл нэмээгүй байна."}</p></div>`;
       return;
     }
 
-    host.innerHTML = `<div class="col" style="gap:16px">${rows.map(card).join("")}</div>`;
+    host.innerHTML = `
+      <div class="alert mb24"><span class="ic">ℹ️</span>
+        <p>Багш нарын хичээл <b>шууд нийтлэгддэг</b>. Дүрэм зөрчсөн, буруу агуулгыг
+        та энд <b>нуух</b> (багшид шалтгаан харагдана) эсвэл <b>бүрмөсөн устгах</b> боломжтой.</p></div>
+      <div class="col" style="gap:16px">${rows.map(card).join("")}</div>`;
     bind(host);
   }
 
@@ -122,9 +129,9 @@
         ${files.length ? `<div class="col mt16" style="gap:6px">${files.map((f) =>
           `<a class="badge" href="${esc(f.url)}" target="_blank" rel="noopener" style="align-self:flex-start">📎 ${esc(f.name)}</a>`).join("")}</div>` : ""}
         <div class="post-actions mt16">
-          ${r.status !== "published" ? `<button class="act" data-ok="${esc(r.id)}" style="color:var(--ok)">✓ Батлах</button>` : ""}
-          ${r.status !== "rejected" ? `<button class="act" data-no="${esc(r.id)}" style="color:var(--terra)">↩ Буцаах</button>` : ""}
-          ${r.status === "published" ? `<button class="act" data-hide="${esc(r.id)}">⏸ Нийтлэлээс хасах</button>` : ""}
+          ${r.status === "published"
+            ? `<button class="act" data-hide="${esc(r.id)}" style="color:var(--terra)">🚫 Нийтлэлээс нуух</button>`
+            : `<button class="act" data-ok="${esc(r.id)}" style="color:var(--ok)">✓ Буцаан нийтлэх</button>`}
           <button class="act" data-del="${esc(r.id)}" style="color:var(--danger)">🗑 Устгах</button>
         </div>
       </article>`;
@@ -133,30 +140,26 @@
   function bind(host) {
     GZ.$$("[data-ok]", host).forEach((b) => b.addEventListener("click", async () => {
       await GZ.store.updateUserLesson(b.dataset.ok, { status: "published", reject_note: null });
-      GZ.toast("Хичээл батлагдаж нийтлэгдлээ.", "ok");
+      GZ.toast("Хичээлийг буцаан нийтэллээ.", "ok");
       await refreshStats(); body();
     }));
 
-    GZ.$$("[data-hide]", host).forEach((b) => b.addEventListener("click", async () => {
-      await GZ.store.updateUserLesson(b.dataset.hide, { status: "pending" });
-      GZ.toast("Нийтлэлээс хаслаа.");
-      await refreshStats(); body();
-    }));
-
-    GZ.$$("[data-no]", host).forEach((b) => b.addEventListener("click", () => {
+    GZ.$$("[data-hide]", host).forEach((b) => b.addEventListener("click", () => {
       const form = GZ.el("div");
-      form.innerHTML = `<div class="field"><label>Буцаах шалтгаан (багшид харагдана)</label>
+      form.innerHTML = `<p class="muted" style="margin:0 0 12px;font-size:.9rem">
+          Хичээл нийтлэлээс алга болно. Багш өөрийн самбар дээрээ шалтгааныг харна.</p>
+        <div class="field"><label>Нуух шалтгаан (заавал биш)</label>
         <textarea class="textarea" id="rjNote" maxlength="400"
-          placeholder="Жишээ: Эх сурвалжаа дурдана уу / зураг тодорхойгүй байна"></textarea></div>`;
+          placeholder="Жишээ: Эх сурвалжаа дурдана уу / зохиогчийн эрх зөрчсөн"></textarea></div>`;
       GZ.modal({
-        title: "Хичээлийг буцаах", content: form,
+        title: "Нийтлэлээс нуух", content: form,
         actions: [
           { label: "Болих", class: "btn-ghost" },
-          { label: "Буцаах", class: "btn-accent", onClick: async (c) => {
+          { label: "Нуух", class: "btn-accent", onClick: async (c) => {
               const note = ($("#rjNote") || {}).value || "";
               c();
-              await GZ.store.updateUserLesson(b.dataset.no, { status: "rejected", reject_note: note.trim() || null });
-              GZ.toast("Буцаалаа.");
+              await GZ.store.updateUserLesson(b.dataset.hide, { status: "hidden", reject_note: note.trim() || null });
+              GZ.toast("Нийтлэлээс нууллаа.");
               await refreshStats(); body();
             } },
         ],
@@ -194,8 +197,9 @@
 
     host.innerHTML = `
       <div class="alert mb24"><span class="ic">ℹ️</span>
-        <p><b>Баталгаажсан багш</b>-ийн хичээл шууд нийтлэгддэг. Баталгаажаагүй багшийн
-        хичээл «Хүлээгдэж буй» болж таны хяналтад ирнэ.</p></div>
+        <p>Багшийн эрхтэй хүн бүр хичээлээ <b>шууд нийтэлнэ</b>. Хэрэглэгчийн эрхийг
+        энд солино — сурагчийг багш болгох, буруу хэрэглэсэн багшийг сурагч болгож
+        нийтлэх эрхийг нь хаах боломжтой.</p></div>
       <div class="table-wrap">
         <table class="tbl">
           <thead><tr><th>Нэр</th><th>Эрх</th><th>Сургууль / хичээл</th><th>Бүртгүүлсэн</th><th>Үйлдэл</th></tr></thead>
@@ -211,8 +215,6 @@
                 <td class="muted" style="font-size:.82rem">${GZ.timeAgo(p.created_at)}</td>
                 <td>
                   <div class="row row-wrap" style="gap:5px">
-                    ${p.role === "teacher" && !p.verified
-                      ? `<button class="act" data-ver="${esc(p.id)}" style="color:var(--ok)">✓ Баталгаажуулах</button>` : ""}
                     ${p.role === "student"
                       ? `<button class="act" data-mk="${esc(p.id)}">Багш болгох</button>` : ""}
                     ${p.role === "teacher"
@@ -232,8 +234,6 @@
       GZ.toast(msg, "ok");
       await refreshStats(); teachersView();
     };
-    GZ.$$("[data-ver]", host).forEach((b) => b.addEventListener("click", () =>
-      act(b.dataset.ver, "teacher", true, "Багш баталгаажлаа.")));
     GZ.$$("[data-mk]", host).forEach((b) => b.addEventListener("click", () =>
       act(b.dataset.mk, "teacher", true, "Багшийн эрх олголоо.")));
     GZ.$$("[data-stu]", host).forEach((b) => b.addEventListener("click", () =>

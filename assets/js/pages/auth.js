@@ -84,9 +84,9 @@
               <input class="input" id="fSubject" name="subject" maxlength="60" placeholder="Газарзүй">
             </div>
           </div>
-          <div class="alert warn mb16" style="font-size:.85rem"><span class="ic">ℹ️</span>
-            <p>Багшийн эрхийг админ багш баталгаажуулна. Түүн хүртэл таны нэмсэн хичээл
-            хяналтын жагсаалтад орж, батлагдсаны дараа нийтлэгдэнэ.</p></div>
+          <div class="alert ok mb16" style="font-size:.85rem"><span class="ic">🚀</span>
+            <p>Багшийн эрхээр бүртгүүлбэл хичээл, хөтөлбөр, бичлэгээ <b>шууд нийтэлнэ</b> —
+            батлуулах шаардлагагүй. Дүрэм зөрчсөн агуулгыг админ багш устгана.</p></div>
         </div>` : ""}
         <div class="field">
           <label for="fEmail">И-мэйл</label>

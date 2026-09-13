@@ -29,10 +29,7 @@
       <div class="row row-wrap" style="gap:8px">
         <span class="badge" style="background:rgba(255,255,255,.16);color:#fff">${esc(u.name)}</span>
         <span class="badge ${r.cls}">${esc(r.t)}</span>
-        ${GZ.store.canPublish()
-          ? '<span class="badge ok">Хичээл шууд нийтлэгдэнэ</span>'
-          : GZ.store.isTeacher()
-            ? '<span class="badge gold">Админ баталгаажуулах хүлээгдэж байна</span>' : ""}
+        ${GZ.store.isTeacher() ? '<span class="badge ok">Хичээл шууд нийтлэгдэнэ</span>' : ""}
       </div>`;
   }
 
@@ -118,13 +115,14 @@
   const KIND = { text: ["📄", "Бичмэл"], video: ["🎬", "Бичлэг"], link: ["🔗", "Холбоос"] };
   const STATUS = {
     published: ["ok", "Нийтлэгдсэн"],
-    pending: ["gold", "Хүлээгдэж буй"],
-    rejected: ["danger", "Буцаагдсан"],
+    hidden:    ["gold", "Админ нуусан"],
+    pending:   ["gold", "Хүлээгдэж буй"],
+    rejected:  ["danger", "Буцаагдсан"],
   };
 
   function lessonRow(r, mine) {
     const k = KIND[r.kind] || KIND.text;
-    const s = STATUS[r.status] || STATUS.pending;
+    const s = STATUS[r.status] || STATUS.published;
     const files = Array.isArray(r.files) ? r.files : [];
     const canEdit = mine || GZ.store.isAdmin();
     return `
@@ -145,8 +143,8 @@
             </div>
           </div>
         </div>
-        ${r.status === "rejected" && r.reject_note
-          ? `<div class="alert warn mt16"><span class="ic">↩️</span><p><b>Админы тайлбар:</b> ${esc(r.reject_note)}</p></div>` : ""}
+        ${(r.status === "hidden" || r.status === "rejected")
+          ? `<div class="alert warn mt16"><span class="ic">🚫</span><p><b>Админ энэ хичээлийг нийтлэлээс хассан.</b>${r.reject_note ? " " + esc(r.reject_note) : ""}</p></div>` : ""}
         <div class="post-actions mt16">
           <button class="act" data-open="${esc(r.id)}">${GZ.icon("book", 15)} Дэлгэрэнгүй</button>
           <button class="act" data-disc="${esc(r.id)}">${GZ.icon("chat", 15)} Хэлэлцүүлэг</button>
@@ -293,12 +291,12 @@
   function formView() {
     pending = [];
     const host = $("#teachBody");
-    const canPub = GZ.store.canPublish();
 
     host.innerHTML = `
-      ${canPub ? "" : `<div class="alert warn mb24"><span class="ic">⏳</span>
-        <p>Таны багшийн эрх хараахан баталгаажаагүй байна. Нэмсэн хичээл
-        <b>«Хүлээгдэж буй»</b> төлөвт орж, админ багш хянасны дараа нийтлэгдэнэ.</p></div>`}
+      <div class="alert ok mb24"><span class="ic">🚀</span>
+        <p>Таны хичээл <b>батлуулахгүйгээр шууд нийтлэгдэнэ</b>. Бүх багш үзэж,
+        хэлэлцүүлэгт саналаа бичих боломжтой. Дүрэм зөрчсөн агуулгыг админ нуух
+        буюу устгах эрхтэй тул эх сурвалж, зохиогчийн эрхээ анхаарна уу.</p></div>
 
       <form class="card" id="ulForm" style="padding:clamp(20px,3vw,30px)">
         <div class="field">
@@ -356,7 +354,7 @@
         <div id="ulMsg"></div>
         <div class="row row-wrap mt16">
           <button class="btn btn-primary btn-lg" type="submit" id="ulSubmit">
-            ${canPub ? "Нийтлэх" : "Хянуулахаар илгээх"}
+            Нийтлэх
           </button>
           <button class="btn btn-ghost" type="button" id="ulCancel">Болих</button>
         </div>
@@ -449,13 +447,13 @@
           .map((f) => ({ name: f.name, path: f.path, url: f.url, type: f.type, size: f.size })),
       });
       pending = [];
-      GZ.toast(rec.status === "published" ? "Хичээл нийтлэгдлээ!" : "Хянуулахаар илгээлээ.", "ok");
+      GZ.toast("Хичээл нийтлэгдлээ!", "ok");
       tab = "mine";
       render();
     } catch (ex) {
       msg.innerHTML = `<div class="alert warn"><span class="ic">⚠️</span><p>${esc(ex.message)}</p></div>`;
       btn.disabled = false;
-      btn.textContent = GZ.store.canPublish() ? "Нийтлэх" : "Хянуулахаар илгээх";
+      btn.textContent = "Нийтлэх";
     }
   }
 

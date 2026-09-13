@@ -89,13 +89,11 @@
   /* ---------------- Эрх ---------------- */
   store.isTeacher = () => !!store.user && (store.user.role === "teacher" || store.user.role === "admin");
   store.isAdmin = () => !!store.user && store.user.role === "admin";
-  store.canPublish = () => !!store.user && (store.user.role === "admin" || (store.user.role === "teacher" && store.user.verified));
+  store.canPublish = () => store.isTeacher();   // багш бүр шууд нийтэлнэ
 
   store.roleLabel = function (role, verified) {
     if (role === "admin") return { t: "Админ багш", cls: "terra" };
-    if (role === "teacher") return verified
-      ? { t: "Багш", cls: "teal" }
-      : { t: "Багш (хүлээгдэж буй)", cls: "gold" };
+    if (role === "teacher") return { t: "Багш", cls: "teal" };
     return { t: "Сурагч", cls: "" };
   };
 
@@ -379,8 +377,8 @@
   };
 
   /* ================= БАГШИЙН ОРУУЛСАН ХИЧЭЭЛ =================
-     Баталгаажсан багшийн хичээл шууд нийтлэгдэнэ (status = published).
-     Баталгаажаагүй бол «pending» болж, админ багш хянана. */
+     Багшийн хичээл ШУУД нийтлэгдэнэ (status = published).
+     Дүрэм зөрчсөн агуулгыг админ нууж (hidden) эсвэл устгана. */
   const ulLocal = () => LS.get("userLessons", []);
   const ulSave = (rows) => LS.set("userLessons", rows);
 
@@ -404,7 +402,7 @@
 
   store.addUserLesson = async function (L) {
     if (!store.user) throw new Error("Нэвтрээгүй байна.");
-    const status = store.canPublish() ? "published" : "pending";
+    const status = "published";
     const rec = Object.assign({
       id: "ul" + Date.now().toString(36),
       user_id: store.user.id,
